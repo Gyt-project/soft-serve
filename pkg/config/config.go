@@ -100,6 +100,15 @@ type StatsConfig struct {
 	ListenAddr string `env:"LISTEN_ADDR" yaml:"listen_addr"`
 }
 
+// GRPCConfig is the configuration for the gRPC server.
+type GRPCConfig struct {
+	// Enabled toggles the gRPC server on/off
+	Enabled bool `env:"ENABLED" yaml:"enabled"`
+
+	// ListenAddr is the address on which the gRPC server will listen.
+	ListenAddr string `env:"LISTEN_ADDR" yaml:"listen_addr"`
+}
+
 // LogConfig is the logger configuration.
 type LogConfig struct {
 	// Format is the format of the logs.
@@ -155,6 +164,9 @@ type Config struct {
 
 	// Stats is the configuration for the stats server.
 	Stats StatsConfig `envPrefix:"STATS_" yaml:"stats"`
+
+	// GRPC is the configuration for the gRPC management server.
+	GRPC GRPCConfig `envPrefix:"GRPC_" yaml:"grpc"`
 
 	// Log is the logger configuration.
 	Log LogConfig `envPrefix:"LOG_" yaml:"log"`
@@ -213,6 +225,8 @@ func (c *Config) Environ() []string {
 		fmt.Sprintf("SOFT_SERVE_HTTP_CORS_ALLOWED_METHODS=%s", strings.Join(c.HTTP.CORS.AllowedMethods, ",")),
 		fmt.Sprintf("SOFT_SERVE_STATS_ENABLED=%t", c.Stats.Enabled),
 		fmt.Sprintf("SOFT_SERVE_STATS_LISTEN_ADDR=%s", c.Stats.ListenAddr),
+		fmt.Sprintf("SOFT_SERVE_GRPC_ENABLED=%t", c.GRPC.Enabled),
+		fmt.Sprintf("SOFT_SERVE_GRPC_LISTEN_ADDR=%s", c.GRPC.ListenAddr),
 		fmt.Sprintf("SOFT_SERVE_LOG_FORMAT=%s", c.Log.Format),
 		fmt.Sprintf("SOFT_SERVE_LOG_TIME_FORMAT=%s", c.Log.TimeFormat),
 		fmt.Sprintf("SOFT_SERVE_DB_DRIVER=%s", c.DB.Driver),
@@ -379,6 +393,10 @@ func DefaultConfig() *Config {
 		Stats: StatsConfig{
 			Enabled:    true,
 			ListenAddr: "localhost:23233",
+		},
+		GRPC: GRPCConfig{
+			Enabled:    true,
+			ListenAddr: "localhost:23234",
 		},
 		Log: LogConfig{
 			Format:     "text",

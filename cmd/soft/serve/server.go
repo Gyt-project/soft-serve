@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/soft-serve/pkg/cron"
 	"github.com/charmbracelet/soft-serve/pkg/daemon"
 	"github.com/charmbracelet/soft-serve/pkg/db"
+	grpcsrv "github.com/charmbracelet/soft-serve/pkg/grpc"
 	"github.com/charmbracelet/soft-serve/pkg/jobs"
 	sshsrv "github.com/charmbracelet/soft-serve/pkg/ssh"
 	"github.com/charmbracelet/soft-serve/pkg/stats"
@@ -28,6 +29,7 @@ type Server struct {
 	GitDaemon   *daemon.GitDaemon
 	HTTPServer  *web.HTTPServer
 	StatsServer *stats.StatsServer
+	GRPCServer  bool // Track if gRPC is running
 	CertLoader  *CertReloader
 	Cron        *cron.Scheduler
 	Config      *config.Config
@@ -153,6 +155,17 @@ func (s *Server) Start() error {
 		errg.Go(func() error {
 			s.logger.Print("Starting Stats server", "addr", s.Config.Stats.ListenAddr)
 			if err := s.StatsServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+				return err
+			}
+			return nil
+		})
+	}
+
+	// optionally start the gRPC server
+	if s.Config.GRPC.Enabled {
+		s.GRPCServer = true
+		errg.Go(func() error {
+			if err := grpcsrv.RunServer(s.ctx, s.Backend); err != nil {
 				return err
 			}
 			return nil
