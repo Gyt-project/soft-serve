@@ -21,6 +21,8 @@ service GitServerManagement {
   // Repository Content Browsing
   rpc GetTree(GetTreeRequest) returns (GetTreeResponse);
   rpc GetBlob(GetBlobRequest) returns (GetBlobResponse);
+  rpc GetBranches(GetBranchesRequest) returns (GetBranchesResponse);
+  rpc ListUserRepositories(ListUserRepositoriesRequest) returns (ListRepositoriesResponse);
 
   // User Management
   rpc CreateUser(CreateUserRequest) returns (User);
@@ -337,4 +339,24 @@ message GetBlobResponse {
   int64 size = 2;
   bool is_binary = 3;
   string path = 4;
+}
+
+// Branch Messages
+message Branch {
+  string name = 1;        // Short branch name (e.g., "main")
+  string full_name = 2;   // Full reference name (e.g., "refs/heads/main")
+  string commit_sha = 3;  // Commit SHA the branch points to
+}
+
+message GetBranchesRequest {
+  string repo_name = 1;   // Repository name
+}
+
+message GetBranchesResponse {
+  repeated Branch branches = 1;
+}
+
+// List user repositories
+message ListUserRepositoriesRequest {
+  string username = 1;    // Username to get repositories for
 }

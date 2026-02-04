@@ -42,6 +42,8 @@ The gRPC API provides comprehensive management capabilities:
 ### Repository Content Browsing
 - `GetTree` - List directory contents at a specific path
 - `GetBlob` - Get file contents at a specific path
+- `GetBranches` - Get all branches for a repository
+- `ListUserRepositories` - List all repositories owned by a specific user
 
 ### User Management
 - `CreateUser` - Create a new user with optional admin rights
@@ -230,6 +232,44 @@ grpcurl -plaintext -d '{
   "path": "config.yaml"
 }' localhost:23234 softserve.GitServerManagement/GetBlob
 ```
+
+### Example: Get Repository Branches
+
+Get all branches for a repository:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo"
+}' localhost:23234 softserve.GitServerManagement/GetBranches
+```
+
+This returns all branches with their names, full reference names, and commit SHAs:
+```json
+{
+  "branches": [
+    {
+      "name": "main",
+      "fullName": "refs/heads/main",
+      "commitSha": "abc123..."
+    },
+    {
+      "name": "develop",
+      "fullName": "refs/heads/develop",
+      "commitSha": "def456..."
+    }
+  ]
+}
+```
+
+### Example: List User Repositories
+
+Get all repositories owned by a specific user:
+```bash
+grpcurl -plaintext -d '{
+  "username": "john"
+}' localhost:23234 softserve.GitServerManagement/ListUserRepositories
+```
+
+This returns the same format as `ListRepositories` but filtered to only repos owned by the specified user.
 
 ## Access Levels
 

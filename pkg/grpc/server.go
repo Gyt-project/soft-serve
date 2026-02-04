@@ -878,6 +878,84 @@ func (s *Server) GetBlob(ctx context.Context, req *GetBlobRequest) (*GetBlobResp
 	}, nil
 }
 
+// GetBranches returns all branches for a repository
+func (s *Server) GetBranches(ctx context.Context, req *GetBranchesRequest) (*GetBranchesResponse, error) {
+	if req.RepoName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name is required")
+	}
+
+	// Get repository
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	// Get git repository
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Get all references
+	refs, err := gitRepo.References()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get references: %v", err)
+	}
+
+	// Filter for branches only
+	branches := make([]*Branch, 0)
+	for _, ref := range refs {
+		if ref.IsBranch() {
+			branches = append(branches, &Branch{
+				Name:      ref.Name().Short(),
+				FullName:  ref.Name().String(),
+				CommitSha: ref.ID,
+			})
+		}
+	}
+
+	return &GetBranchesResponse{
+		Branches: branches,
+	}, nil
+}
+
+// ListUserRepositories lists all repositories for a specific user
+func (s *Server) ListUserRepositories(ctx context.Context, req *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error) {
+	if req.Username == "" {
+		return nil, status.Error(codes.InvalidArgument, "username is required")
+	}
+
+	// Get user
+	user, err := s.backend.User(ctx, req.Username)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "user not found: %v", err)
+	}
+
+	// Get all repositories and filter by user ID
+	allRepos, err := s.backend.Repositories(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get repositories: %v", err)
+	}
+
+	// Filter repositories owned by this user
+	userRepos := make([]proto.Repository, 0)
+	for _, repo := range allRepos {
+		if repo.UserID() == user.ID() {
+			userRepos = append(userRepos, repo)
+		}
+	}
+
+	// Convert to proto
+	protoRepos := make([]*Repository, len(userRepos))
+	for i, repo := range userRepos {
+		protoRepos[i] = toProtoRepository(repo)
+	}
+
+	return &ListRepositoriesResponse{
+		Repositories: protoRepos,
+	}, nil
+}
+
 // Helper functions
 
 func toProtoRepository(repo proto.Repository) *Repository {

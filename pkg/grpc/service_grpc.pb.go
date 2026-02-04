@@ -20,37 +20,39 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GitServerManagement_CreateRepository_FullMethodName   = "/softserve.GitServerManagement/CreateRepository"
-	GitServerManagement_DeleteRepository_FullMethodName   = "/softserve.GitServerManagement/DeleteRepository"
-	GitServerManagement_GetRepository_FullMethodName      = "/softserve.GitServerManagement/GetRepository"
-	GitServerManagement_ListRepositories_FullMethodName   = "/softserve.GitServerManagement/ListRepositories"
-	GitServerManagement_RenameRepository_FullMethodName   = "/softserve.GitServerManagement/RenameRepository"
-	GitServerManagement_UpdateRepository_FullMethodName   = "/softserve.GitServerManagement/UpdateRepository"
-	GitServerManagement_ImportRepository_FullMethodName   = "/softserve.GitServerManagement/ImportRepository"
-	GitServerManagement_GetTree_FullMethodName            = "/softserve.GitServerManagement/GetTree"
-	GitServerManagement_GetBlob_FullMethodName            = "/softserve.GitServerManagement/GetBlob"
-	GitServerManagement_CreateUser_FullMethodName         = "/softserve.GitServerManagement/CreateUser"
-	GitServerManagement_DeleteUser_FullMethodName         = "/softserve.GitServerManagement/DeleteUser"
-	GitServerManagement_GetUser_FullMethodName            = "/softserve.GitServerManagement/GetUser"
-	GitServerManagement_ListUsers_FullMethodName          = "/softserve.GitServerManagement/ListUsers"
-	GitServerManagement_UpdateUser_FullMethodName         = "/softserve.GitServerManagement/UpdateUser"
-	GitServerManagement_AddPublicKey_FullMethodName       = "/softserve.GitServerManagement/AddPublicKey"
-	GitServerManagement_RemovePublicKey_FullMethodName    = "/softserve.GitServerManagement/RemovePublicKey"
-	GitServerManagement_ListPublicKeys_FullMethodName     = "/softserve.GitServerManagement/ListPublicKeys"
-	GitServerManagement_AddCollaborator_FullMethodName    = "/softserve.GitServerManagement/AddCollaborator"
-	GitServerManagement_RemoveCollaborator_FullMethodName = "/softserve.GitServerManagement/RemoveCollaborator"
-	GitServerManagement_ListCollaborators_FullMethodName  = "/softserve.GitServerManagement/ListCollaborators"
-	GitServerManagement_CreateAccessToken_FullMethodName  = "/softserve.GitServerManagement/CreateAccessToken"
-	GitServerManagement_DeleteAccessToken_FullMethodName  = "/softserve.GitServerManagement/DeleteAccessToken"
-	GitServerManagement_ListAccessTokens_FullMethodName   = "/softserve.GitServerManagement/ListAccessTokens"
-	GitServerManagement_CreateWebhook_FullMethodName      = "/softserve.GitServerManagement/CreateWebhook"
-	GitServerManagement_DeleteWebhook_FullMethodName      = "/softserve.GitServerManagement/DeleteWebhook"
-	GitServerManagement_GetWebhook_FullMethodName         = "/softserve.GitServerManagement/GetWebhook"
-	GitServerManagement_ListWebhooks_FullMethodName       = "/softserve.GitServerManagement/ListWebhooks"
-	GitServerManagement_UpdateWebhook_FullMethodName      = "/softserve.GitServerManagement/UpdateWebhook"
-	GitServerManagement_GetSettings_FullMethodName        = "/softserve.GitServerManagement/GetSettings"
-	GitServerManagement_UpdateSettings_FullMethodName     = "/softserve.GitServerManagement/UpdateSettings"
-	GitServerManagement_HealthCheck_FullMethodName        = "/softserve.GitServerManagement/HealthCheck"
+	GitServerManagement_CreateRepository_FullMethodName     = "/softserve.GitServerManagement/CreateRepository"
+	GitServerManagement_DeleteRepository_FullMethodName     = "/softserve.GitServerManagement/DeleteRepository"
+	GitServerManagement_GetRepository_FullMethodName        = "/softserve.GitServerManagement/GetRepository"
+	GitServerManagement_ListRepositories_FullMethodName     = "/softserve.GitServerManagement/ListRepositories"
+	GitServerManagement_RenameRepository_FullMethodName     = "/softserve.GitServerManagement/RenameRepository"
+	GitServerManagement_UpdateRepository_FullMethodName     = "/softserve.GitServerManagement/UpdateRepository"
+	GitServerManagement_ImportRepository_FullMethodName     = "/softserve.GitServerManagement/ImportRepository"
+	GitServerManagement_GetTree_FullMethodName              = "/softserve.GitServerManagement/GetTree"
+	GitServerManagement_GetBlob_FullMethodName              = "/softserve.GitServerManagement/GetBlob"
+	GitServerManagement_GetBranches_FullMethodName          = "/softserve.GitServerManagement/GetBranches"
+	GitServerManagement_ListUserRepositories_FullMethodName = "/softserve.GitServerManagement/ListUserRepositories"
+	GitServerManagement_CreateUser_FullMethodName           = "/softserve.GitServerManagement/CreateUser"
+	GitServerManagement_DeleteUser_FullMethodName           = "/softserve.GitServerManagement/DeleteUser"
+	GitServerManagement_GetUser_FullMethodName              = "/softserve.GitServerManagement/GetUser"
+	GitServerManagement_ListUsers_FullMethodName            = "/softserve.GitServerManagement/ListUsers"
+	GitServerManagement_UpdateUser_FullMethodName           = "/softserve.GitServerManagement/UpdateUser"
+	GitServerManagement_AddPublicKey_FullMethodName         = "/softserve.GitServerManagement/AddPublicKey"
+	GitServerManagement_RemovePublicKey_FullMethodName      = "/softserve.GitServerManagement/RemovePublicKey"
+	GitServerManagement_ListPublicKeys_FullMethodName       = "/softserve.GitServerManagement/ListPublicKeys"
+	GitServerManagement_AddCollaborator_FullMethodName      = "/softserve.GitServerManagement/AddCollaborator"
+	GitServerManagement_RemoveCollaborator_FullMethodName   = "/softserve.GitServerManagement/RemoveCollaborator"
+	GitServerManagement_ListCollaborators_FullMethodName    = "/softserve.GitServerManagement/ListCollaborators"
+	GitServerManagement_CreateAccessToken_FullMethodName    = "/softserve.GitServerManagement/CreateAccessToken"
+	GitServerManagement_DeleteAccessToken_FullMethodName    = "/softserve.GitServerManagement/DeleteAccessToken"
+	GitServerManagement_ListAccessTokens_FullMethodName     = "/softserve.GitServerManagement/ListAccessTokens"
+	GitServerManagement_CreateWebhook_FullMethodName        = "/softserve.GitServerManagement/CreateWebhook"
+	GitServerManagement_DeleteWebhook_FullMethodName        = "/softserve.GitServerManagement/DeleteWebhook"
+	GitServerManagement_GetWebhook_FullMethodName           = "/softserve.GitServerManagement/GetWebhook"
+	GitServerManagement_ListWebhooks_FullMethodName         = "/softserve.GitServerManagement/ListWebhooks"
+	GitServerManagement_UpdateWebhook_FullMethodName        = "/softserve.GitServerManagement/UpdateWebhook"
+	GitServerManagement_GetSettings_FullMethodName          = "/softserve.GitServerManagement/GetSettings"
+	GitServerManagement_UpdateSettings_FullMethodName       = "/softserve.GitServerManagement/UpdateSettings"
+	GitServerManagement_HealthCheck_FullMethodName          = "/softserve.GitServerManagement/HealthCheck"
 )
 
 // GitServerManagementClient is the client API for GitServerManagement service.
@@ -70,6 +72,8 @@ type GitServerManagementClient interface {
 	// Repository Content Browsing
 	GetTree(ctx context.Context, in *GetTreeRequest, opts ...grpc.CallOption) (*GetTreeResponse, error)
 	GetBlob(ctx context.Context, in *GetBlobRequest, opts ...grpc.CallOption) (*GetBlobResponse, error)
+	GetBranches(ctx context.Context, in *GetBranchesRequest, opts ...grpc.CallOption) (*GetBranchesResponse, error)
+	ListUserRepositories(ctx context.Context, in *ListUserRepositoriesRequest, opts ...grpc.CallOption) (*ListRepositoriesResponse, error)
 	// User Management
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -193,6 +197,26 @@ func (c *gitServerManagementClient) GetBlob(ctx context.Context, in *GetBlobRequ
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBlobResponse)
 	err := c.cc.Invoke(ctx, GitServerManagement_GetBlob_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetBranches(ctx context.Context, in *GetBranchesRequest, opts ...grpc.CallOption) (*GetBranchesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBranchesResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetBranches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) ListUserRepositories(ctx context.Context, in *ListUserRepositoriesRequest, opts ...grpc.CallOption) (*ListRepositoriesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRepositoriesResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_ListUserRepositories_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -436,6 +460,8 @@ type GitServerManagementServer interface {
 	// Repository Content Browsing
 	GetTree(context.Context, *GetTreeRequest) (*GetTreeResponse, error)
 	GetBlob(context.Context, *GetBlobRequest) (*GetBlobResponse, error)
+	GetBranches(context.Context, *GetBranchesRequest) (*GetBranchesResponse, error)
+	ListUserRepositories(context.Context, *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error)
 	// User Management
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
@@ -501,6 +527,12 @@ func (UnimplementedGitServerManagementServer) GetTree(context.Context, *GetTreeR
 }
 func (UnimplementedGitServerManagementServer) GetBlob(context.Context, *GetBlobRequest) (*GetBlobResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBlob not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetBranches(context.Context, *GetBranchesRequest) (*GetBranchesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBranches not implemented")
+}
+func (UnimplementedGitServerManagementServer) ListUserRepositories(context.Context, *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListUserRepositories not implemented")
 }
 func (UnimplementedGitServerManagementServer) CreateUser(context.Context, *CreateUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
@@ -747,6 +779,42 @@ func _GitServerManagement_GetBlob_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GitServerManagementServer).GetBlob(ctx, req.(*GetBlobRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetBranches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBranchesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetBranches(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetBranches_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetBranches(ctx, req.(*GetBranchesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_ListUserRepositories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserRepositoriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).ListUserRepositories(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_ListUserRepositories_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).ListUserRepositories(ctx, req.(*ListUserRepositoriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1189,6 +1257,14 @@ var GitServerManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBlob",
 			Handler:    _GitServerManagement_GetBlob_Handler,
+		},
+		{
+			MethodName: "GetBranches",
+			Handler:    _GitServerManagement_GetBranches_Handler,
+		},
+		{
+			MethodName: "ListUserRepositories",
+			Handler:    _GitServerManagement_ListUserRepositories_Handler,
 		},
 		{
 			MethodName: "CreateUser",
