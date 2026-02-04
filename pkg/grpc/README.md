@@ -39,6 +39,10 @@ The gRPC API provides comprehensive management capabilities:
 - `UpdateRepository` - Update repository settings (description, visibility, etc.)
 - `ImportRepository` - Import a repository from a remote URL
 
+### Repository Content Browsing
+- `GetTree` - List directory contents at a specific path
+- `GetBlob` - Get file contents at a specific path
+
 ### User Management
 - `CreateUser` - Create a new user with optional admin rights
 - `DeleteUser` - Delete a user
@@ -171,6 +175,60 @@ grpcurl -plaintext -d '{
 
 ```bash
 grpcurl -plaintext localhost:23234 softserve.GitServerManagement/HealthCheck
+```
+
+### Example: Browse Repository Tree
+
+List files in the root directory:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo"
+}' localhost:23234 softserve.GitServerManagement/GetTree
+```
+
+List files in a specific directory:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "path": "cmd/soft"
+}' localhost:23234 softserve.GitServerManagement/GetTree
+```
+
+List files at a specific branch or tag:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "ref": "main",
+  "path": "pkg"
+}' localhost:23234 softserve.GitServerManagement/GetTree
+```
+
+### Example: Get File Contents
+
+Get file from default branch (HEAD):
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "path": "README.md"
+}' localhost:23234 softserve.GitServerManagement/GetBlob
+```
+
+Get file from specific branch:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "ref": "develop",
+  "path": "cmd/soft/main.go"
+}' localhost:23234 softserve.GitServerManagement/GetBlob
+```
+
+Get file from specific commit:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "ref": "abc123def",
+  "path": "config.yaml"
+}' localhost:23234 softserve.GitServerManagement/GetBlob
 ```
 
 ## Access Levels

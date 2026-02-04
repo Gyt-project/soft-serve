@@ -2390,6 +2390,331 @@ func (x *HealthCheckResponse) GetVersion() string {
 	return ""
 }
 
+// Repository Content Messages
+type GetTreeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	Ref           *string                `protobuf:"bytes,2,opt,name=ref,proto3,oneof" json:"ref,omitempty"`   // branch/tag/commit, defaults to HEAD
+	Path          *string                `protobuf:"bytes,3,opt,name=path,proto3,oneof" json:"path,omitempty"` // path within the tree, defaults to root
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTreeRequest) Reset() {
+	*x = GetTreeRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTreeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTreeRequest) ProtoMessage() {}
+
+func (x *GetTreeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTreeRequest.ProtoReflect.Descriptor instead.
+func (*GetTreeRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *GetTreeRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *GetTreeRequest) GetRef() string {
+	if x != nil && x.Ref != nil {
+		return *x.Ref
+	}
+	return ""
+}
+
+func (x *GetTreeRequest) GetPath() string {
+	if x != nil && x.Path != nil {
+		return *x.Path
+	}
+	return ""
+}
+
+type TreeEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Path          string                 `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
+	Mode          string                 `protobuf:"bytes,3,opt,name=mode,proto3" json:"mode,omitempty"`
+	Size          int64                  `protobuf:"varint,4,opt,name=size,proto3" json:"size,omitempty"`
+	IsDir         bool                   `protobuf:"varint,5,opt,name=is_dir,json=isDir,proto3" json:"is_dir,omitempty"`
+	IsSubmodule   bool                   `protobuf:"varint,6,opt,name=is_submodule,json=isSubmodule,proto3" json:"is_submodule,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TreeEntry) Reset() {
+	*x = TreeEntry{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TreeEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TreeEntry) ProtoMessage() {}
+
+func (x *TreeEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TreeEntry.ProtoReflect.Descriptor instead.
+func (*TreeEntry) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *TreeEntry) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *TreeEntry) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *TreeEntry) GetMode() string {
+	if x != nil {
+		return x.Mode
+	}
+	return ""
+}
+
+func (x *TreeEntry) GetSize() int64 {
+	if x != nil {
+		return x.Size
+	}
+	return 0
+}
+
+func (x *TreeEntry) GetIsDir() bool {
+	if x != nil {
+		return x.IsDir
+	}
+	return false
+}
+
+func (x *TreeEntry) GetIsSubmodule() bool {
+	if x != nil {
+		return x.IsSubmodule
+	}
+	return false
+}
+
+type GetTreeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entries       []*TreeEntry           `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	Ref           string                 `protobuf:"bytes,2,opt,name=ref,proto3" json:"ref,omitempty"` // actual ref used (resolved from HEAD, etc)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTreeResponse) Reset() {
+	*x = GetTreeResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTreeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTreeResponse) ProtoMessage() {}
+
+func (x *GetTreeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTreeResponse.ProtoReflect.Descriptor instead.
+func (*GetTreeResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *GetTreeResponse) GetEntries() []*TreeEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
+func (x *GetTreeResponse) GetRef() string {
+	if x != nil {
+		return x.Ref
+	}
+	return ""
+}
+
+type GetBlobRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	Path          string                 `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`     // file path
+	Ref           *string                `protobuf:"bytes,3,opt,name=ref,proto3,oneof" json:"ref,omitempty"` // branch/tag/commit, defaults to HEAD
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBlobRequest) Reset() {
+	*x = GetBlobRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBlobRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBlobRequest) ProtoMessage() {}
+
+func (x *GetBlobRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBlobRequest.ProtoReflect.Descriptor instead.
+func (*GetBlobRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *GetBlobRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *GetBlobRequest) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *GetBlobRequest) GetRef() string {
+	if x != nil && x.Ref != nil {
+		return *x.Ref
+	}
+	return ""
+}
+
+type GetBlobResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Content       []byte                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	Size          int64                  `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	IsBinary      bool                   `protobuf:"varint,3,opt,name=is_binary,json=isBinary,proto3" json:"is_binary,omitempty"`
+	Path          string                 `protobuf:"bytes,4,opt,name=path,proto3" json:"path,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetBlobResponse) Reset() {
+	*x = GetBlobResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetBlobResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetBlobResponse) ProtoMessage() {}
+
+func (x *GetBlobResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetBlobResponse.ProtoReflect.Descriptor instead.
+func (*GetBlobResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *GetBlobResponse) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *GetBlobResponse) GetSize() int64 {
+	if x != nil {
+		return x.Size
+	}
+	return 0
+}
+
+func (x *GetBlobResponse) GetIsBinary() bool {
+	if x != nil {
+		return x.IsBinary
+	}
+	return false
+}
+
+func (x *GetBlobResponse) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
 var File_pkg_grpc_service_proto protoreflect.FileDescriptor
 
 const file_pkg_grpc_service_proto_rawDesc = "" +
@@ -2581,14 +2906,40 @@ const file_pkg_grpc_service_proto_rawDesc = "" +
 	"\f_anon_access\"G\n" +
 	"\x13HealthCheckResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\x12\x18\n" +
-	"\aversion\x18\x02 \x01(\tR\aversion*k\n" +
+	"\aversion\x18\x02 \x01(\tR\aversion\"n\n" +
+	"\x0eGetTreeRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x15\n" +
+	"\x03ref\x18\x02 \x01(\tH\x00R\x03ref\x88\x01\x01\x12\x17\n" +
+	"\x04path\x18\x03 \x01(\tH\x01R\x04path\x88\x01\x01B\x06\n" +
+	"\x04_refB\a\n" +
+	"\x05_path\"\x95\x01\n" +
+	"\tTreeEntry\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\x12\x12\n" +
+	"\x04mode\x18\x03 \x01(\tR\x04mode\x12\x12\n" +
+	"\x04size\x18\x04 \x01(\x03R\x04size\x12\x15\n" +
+	"\x06is_dir\x18\x05 \x01(\bR\x05isDir\x12!\n" +
+	"\fis_submodule\x18\x06 \x01(\bR\visSubmodule\"S\n" +
+	"\x0fGetTreeResponse\x12.\n" +
+	"\aentries\x18\x01 \x03(\v2\x14.softserve.TreeEntryR\aentries\x12\x10\n" +
+	"\x03ref\x18\x02 \x01(\tR\x03ref\"`\n" +
+	"\x0eGetBlobRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x12\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\x12\x15\n" +
+	"\x03ref\x18\x03 \x01(\tH\x00R\x03ref\x88\x01\x01B\x06\n" +
+	"\x04_ref\"p\n" +
+	"\x0fGetBlobResponse\x12\x18\n" +
+	"\acontent\x18\x01 \x01(\fR\acontent\x12\x12\n" +
+	"\x04size\x18\x02 \x01(\x03R\x04size\x12\x1b\n" +
+	"\tis_binary\x18\x03 \x01(\bR\bisBinary\x12\x12\n" +
+	"\x04path\x18\x04 \x01(\tR\x04path*k\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\r\n" +
 	"\tNO_ACCESS\x10\x01\x12\r\n" +
 	"\tREAD_ONLY\x10\x02\x12\x0e\n" +
 	"\n" +
 	"READ_WRITE\x10\x03\x12\x10\n" +
-	"\fADMIN_ACCESS\x10\x042\xb3\x11\n" +
+	"\fADMIN_ACCESS\x10\x042\xb7\x12\n" +
 	"\x13GitServerManagement\x12M\n" +
 	"\x10CreateRepository\x12\".softserve.CreateRepositoryRequest\x1a\x15.softserve.Repository\x12N\n" +
 	"\x10DeleteRepository\x12\".softserve.DeleteRepositoryRequest\x1a\x16.google.protobuf.Empty\x12G\n" +
@@ -2596,7 +2947,9 @@ const file_pkg_grpc_service_proto_rawDesc = "" +
 	"\x10ListRepositories\x12\".softserve.ListRepositoriesRequest\x1a#.softserve.ListRepositoriesResponse\x12M\n" +
 	"\x10RenameRepository\x12\".softserve.RenameRepositoryRequest\x1a\x15.softserve.Repository\x12M\n" +
 	"\x10UpdateRepository\x12\".softserve.UpdateRepositoryRequest\x1a\x15.softserve.Repository\x12M\n" +
-	"\x10ImportRepository\x12\".softserve.ImportRepositoryRequest\x1a\x15.softserve.Repository\x12;\n" +
+	"\x10ImportRepository\x12\".softserve.ImportRepositoryRequest\x1a\x15.softserve.Repository\x12@\n" +
+	"\aGetTree\x12\x19.softserve.GetTreeRequest\x1a\x1a.softserve.GetTreeResponse\x12@\n" +
+	"\aGetBlob\x12\x19.softserve.GetBlobRequest\x1a\x1a.softserve.GetBlobResponse\x12;\n" +
 	"\n" +
 	"CreateUser\x12\x1c.softserve.CreateUserRequest\x1a\x0f.softserve.User\x12B\n" +
 	"\n" +
@@ -2637,7 +2990,7 @@ func file_pkg_grpc_service_proto_rawDescGZIP() []byte {
 }
 
 var file_pkg_grpc_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pkg_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
+var file_pkg_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
 var file_pkg_grpc_service_proto_goTypes = []any{
 	(AccessLevel)(0),                  // 0: softserve.AccessLevel
 	(*Repository)(nil),                // 1: softserve.Repository
@@ -2680,89 +3033,99 @@ var file_pkg_grpc_service_proto_goTypes = []any{
 	(*ServerSettings)(nil),            // 38: softserve.ServerSettings
 	(*UpdateSettingsRequest)(nil),     // 39: softserve.UpdateSettingsRequest
 	(*HealthCheckResponse)(nil),       // 40: softserve.HealthCheckResponse
-	(*timestamppb.Timestamp)(nil),     // 41: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),             // 42: google.protobuf.Empty
+	(*GetTreeRequest)(nil),            // 41: softserve.GetTreeRequest
+	(*TreeEntry)(nil),                 // 42: softserve.TreeEntry
+	(*GetTreeResponse)(nil),           // 43: softserve.GetTreeResponse
+	(*GetBlobRequest)(nil),            // 44: softserve.GetBlobRequest
+	(*GetBlobResponse)(nil),           // 45: softserve.GetBlobResponse
+	(*timestamppb.Timestamp)(nil),     // 46: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),             // 47: google.protobuf.Empty
 }
 var file_pkg_grpc_service_proto_depIdxs = []int32{
-	41, // 0: softserve.Repository.created_at:type_name -> google.protobuf.Timestamp
-	41, // 1: softserve.Repository.updated_at:type_name -> google.protobuf.Timestamp
+	46, // 0: softserve.Repository.created_at:type_name -> google.protobuf.Timestamp
+	46, // 1: softserve.Repository.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: softserve.ListRepositoriesResponse.repositories:type_name -> softserve.Repository
 	10, // 3: softserve.ListUsersResponse.users:type_name -> softserve.User
 	0,  // 4: softserve.Collaborator.access_level:type_name -> softserve.AccessLevel
 	0,  // 5: softserve.AddCollaboratorRequest.access_level:type_name -> softserve.AccessLevel
 	21, // 6: softserve.ListCollaboratorsResponse.collaborators:type_name -> softserve.Collaborator
-	41, // 7: softserve.AccessToken.created_at:type_name -> google.protobuf.Timestamp
-	41, // 8: softserve.AccessToken.expires_at:type_name -> google.protobuf.Timestamp
-	41, // 9: softserve.CreateAccessTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	46, // 7: softserve.AccessToken.created_at:type_name -> google.protobuf.Timestamp
+	46, // 8: softserve.AccessToken.expires_at:type_name -> google.protobuf.Timestamp
+	46, // 9: softserve.CreateAccessTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
 	26, // 10: softserve.ListAccessTokensResponse.tokens:type_name -> softserve.AccessToken
-	41, // 11: softserve.Webhook.created_at:type_name -> google.protobuf.Timestamp
-	41, // 12: softserve.Webhook.updated_at:type_name -> google.protobuf.Timestamp
+	46, // 11: softserve.Webhook.created_at:type_name -> google.protobuf.Timestamp
+	46, // 12: softserve.Webhook.updated_at:type_name -> google.protobuf.Timestamp
 	31, // 13: softserve.ListWebhooksResponse.webhooks:type_name -> softserve.Webhook
 	0,  // 14: softserve.ServerSettings.anon_access:type_name -> softserve.AccessLevel
 	0,  // 15: softserve.UpdateSettingsRequest.anon_access:type_name -> softserve.AccessLevel
-	2,  // 16: softserve.GitServerManagement.CreateRepository:input_type -> softserve.CreateRepositoryRequest
-	3,  // 17: softserve.GitServerManagement.DeleteRepository:input_type -> softserve.DeleteRepositoryRequest
-	4,  // 18: softserve.GitServerManagement.GetRepository:input_type -> softserve.GetRepositoryRequest
-	5,  // 19: softserve.GitServerManagement.ListRepositories:input_type -> softserve.ListRepositoriesRequest
-	7,  // 20: softserve.GitServerManagement.RenameRepository:input_type -> softserve.RenameRepositoryRequest
-	8,  // 21: softserve.GitServerManagement.UpdateRepository:input_type -> softserve.UpdateRepositoryRequest
-	9,  // 22: softserve.GitServerManagement.ImportRepository:input_type -> softserve.ImportRepositoryRequest
-	11, // 23: softserve.GitServerManagement.CreateUser:input_type -> softserve.CreateUserRequest
-	12, // 24: softserve.GitServerManagement.DeleteUser:input_type -> softserve.DeleteUserRequest
-	13, // 25: softserve.GitServerManagement.GetUser:input_type -> softserve.GetUserRequest
-	14, // 26: softserve.GitServerManagement.ListUsers:input_type -> softserve.ListUsersRequest
-	16, // 27: softserve.GitServerManagement.UpdateUser:input_type -> softserve.UpdateUserRequest
-	17, // 28: softserve.GitServerManagement.AddPublicKey:input_type -> softserve.AddPublicKeyRequest
-	18, // 29: softserve.GitServerManagement.RemovePublicKey:input_type -> softserve.RemovePublicKeyRequest
-	19, // 30: softserve.GitServerManagement.ListPublicKeys:input_type -> softserve.ListPublicKeysRequest
-	22, // 31: softserve.GitServerManagement.AddCollaborator:input_type -> softserve.AddCollaboratorRequest
-	23, // 32: softserve.GitServerManagement.RemoveCollaborator:input_type -> softserve.RemoveCollaboratorRequest
-	24, // 33: softserve.GitServerManagement.ListCollaborators:input_type -> softserve.ListCollaboratorsRequest
-	27, // 34: softserve.GitServerManagement.CreateAccessToken:input_type -> softserve.CreateAccessTokenRequest
-	28, // 35: softserve.GitServerManagement.DeleteAccessToken:input_type -> softserve.DeleteAccessTokenRequest
-	29, // 36: softserve.GitServerManagement.ListAccessTokens:input_type -> softserve.ListAccessTokensRequest
-	32, // 37: softserve.GitServerManagement.CreateWebhook:input_type -> softserve.CreateWebhookRequest
-	33, // 38: softserve.GitServerManagement.DeleteWebhook:input_type -> softserve.DeleteWebhookRequest
-	34, // 39: softserve.GitServerManagement.GetWebhook:input_type -> softserve.GetWebhookRequest
-	35, // 40: softserve.GitServerManagement.ListWebhooks:input_type -> softserve.ListWebhooksRequest
-	37, // 41: softserve.GitServerManagement.UpdateWebhook:input_type -> softserve.UpdateWebhookRequest
-	42, // 42: softserve.GitServerManagement.GetSettings:input_type -> google.protobuf.Empty
-	39, // 43: softserve.GitServerManagement.UpdateSettings:input_type -> softserve.UpdateSettingsRequest
-	42, // 44: softserve.GitServerManagement.HealthCheck:input_type -> google.protobuf.Empty
-	1,  // 45: softserve.GitServerManagement.CreateRepository:output_type -> softserve.Repository
-	42, // 46: softserve.GitServerManagement.DeleteRepository:output_type -> google.protobuf.Empty
-	1,  // 47: softserve.GitServerManagement.GetRepository:output_type -> softserve.Repository
-	6,  // 48: softserve.GitServerManagement.ListRepositories:output_type -> softserve.ListRepositoriesResponse
-	1,  // 49: softserve.GitServerManagement.RenameRepository:output_type -> softserve.Repository
-	1,  // 50: softserve.GitServerManagement.UpdateRepository:output_type -> softserve.Repository
-	1,  // 51: softserve.GitServerManagement.ImportRepository:output_type -> softserve.Repository
-	10, // 52: softserve.GitServerManagement.CreateUser:output_type -> softserve.User
-	42, // 53: softserve.GitServerManagement.DeleteUser:output_type -> google.protobuf.Empty
-	10, // 54: softserve.GitServerManagement.GetUser:output_type -> softserve.User
-	15, // 55: softserve.GitServerManagement.ListUsers:output_type -> softserve.ListUsersResponse
-	10, // 56: softserve.GitServerManagement.UpdateUser:output_type -> softserve.User
-	42, // 57: softserve.GitServerManagement.AddPublicKey:output_type -> google.protobuf.Empty
-	42, // 58: softserve.GitServerManagement.RemovePublicKey:output_type -> google.protobuf.Empty
-	20, // 59: softserve.GitServerManagement.ListPublicKeys:output_type -> softserve.ListPublicKeysResponse
-	42, // 60: softserve.GitServerManagement.AddCollaborator:output_type -> google.protobuf.Empty
-	42, // 61: softserve.GitServerManagement.RemoveCollaborator:output_type -> google.protobuf.Empty
-	25, // 62: softserve.GitServerManagement.ListCollaborators:output_type -> softserve.ListCollaboratorsResponse
-	26, // 63: softserve.GitServerManagement.CreateAccessToken:output_type -> softserve.AccessToken
-	42, // 64: softserve.GitServerManagement.DeleteAccessToken:output_type -> google.protobuf.Empty
-	30, // 65: softserve.GitServerManagement.ListAccessTokens:output_type -> softserve.ListAccessTokensResponse
-	31, // 66: softserve.GitServerManagement.CreateWebhook:output_type -> softserve.Webhook
-	42, // 67: softserve.GitServerManagement.DeleteWebhook:output_type -> google.protobuf.Empty
-	31, // 68: softserve.GitServerManagement.GetWebhook:output_type -> softserve.Webhook
-	36, // 69: softserve.GitServerManagement.ListWebhooks:output_type -> softserve.ListWebhooksResponse
-	31, // 70: softserve.GitServerManagement.UpdateWebhook:output_type -> softserve.Webhook
-	38, // 71: softserve.GitServerManagement.GetSettings:output_type -> softserve.ServerSettings
-	38, // 72: softserve.GitServerManagement.UpdateSettings:output_type -> softserve.ServerSettings
-	40, // 73: softserve.GitServerManagement.HealthCheck:output_type -> softserve.HealthCheckResponse
-	45, // [45:74] is the sub-list for method output_type
-	16, // [16:45] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	42, // 16: softserve.GetTreeResponse.entries:type_name -> softserve.TreeEntry
+	2,  // 17: softserve.GitServerManagement.CreateRepository:input_type -> softserve.CreateRepositoryRequest
+	3,  // 18: softserve.GitServerManagement.DeleteRepository:input_type -> softserve.DeleteRepositoryRequest
+	4,  // 19: softserve.GitServerManagement.GetRepository:input_type -> softserve.GetRepositoryRequest
+	5,  // 20: softserve.GitServerManagement.ListRepositories:input_type -> softserve.ListRepositoriesRequest
+	7,  // 21: softserve.GitServerManagement.RenameRepository:input_type -> softserve.RenameRepositoryRequest
+	8,  // 22: softserve.GitServerManagement.UpdateRepository:input_type -> softserve.UpdateRepositoryRequest
+	9,  // 23: softserve.GitServerManagement.ImportRepository:input_type -> softserve.ImportRepositoryRequest
+	41, // 24: softserve.GitServerManagement.GetTree:input_type -> softserve.GetTreeRequest
+	44, // 25: softserve.GitServerManagement.GetBlob:input_type -> softserve.GetBlobRequest
+	11, // 26: softserve.GitServerManagement.CreateUser:input_type -> softserve.CreateUserRequest
+	12, // 27: softserve.GitServerManagement.DeleteUser:input_type -> softserve.DeleteUserRequest
+	13, // 28: softserve.GitServerManagement.GetUser:input_type -> softserve.GetUserRequest
+	14, // 29: softserve.GitServerManagement.ListUsers:input_type -> softserve.ListUsersRequest
+	16, // 30: softserve.GitServerManagement.UpdateUser:input_type -> softserve.UpdateUserRequest
+	17, // 31: softserve.GitServerManagement.AddPublicKey:input_type -> softserve.AddPublicKeyRequest
+	18, // 32: softserve.GitServerManagement.RemovePublicKey:input_type -> softserve.RemovePublicKeyRequest
+	19, // 33: softserve.GitServerManagement.ListPublicKeys:input_type -> softserve.ListPublicKeysRequest
+	22, // 34: softserve.GitServerManagement.AddCollaborator:input_type -> softserve.AddCollaboratorRequest
+	23, // 35: softserve.GitServerManagement.RemoveCollaborator:input_type -> softserve.RemoveCollaboratorRequest
+	24, // 36: softserve.GitServerManagement.ListCollaborators:input_type -> softserve.ListCollaboratorsRequest
+	27, // 37: softserve.GitServerManagement.CreateAccessToken:input_type -> softserve.CreateAccessTokenRequest
+	28, // 38: softserve.GitServerManagement.DeleteAccessToken:input_type -> softserve.DeleteAccessTokenRequest
+	29, // 39: softserve.GitServerManagement.ListAccessTokens:input_type -> softserve.ListAccessTokensRequest
+	32, // 40: softserve.GitServerManagement.CreateWebhook:input_type -> softserve.CreateWebhookRequest
+	33, // 41: softserve.GitServerManagement.DeleteWebhook:input_type -> softserve.DeleteWebhookRequest
+	34, // 42: softserve.GitServerManagement.GetWebhook:input_type -> softserve.GetWebhookRequest
+	35, // 43: softserve.GitServerManagement.ListWebhooks:input_type -> softserve.ListWebhooksRequest
+	37, // 44: softserve.GitServerManagement.UpdateWebhook:input_type -> softserve.UpdateWebhookRequest
+	47, // 45: softserve.GitServerManagement.GetSettings:input_type -> google.protobuf.Empty
+	39, // 46: softserve.GitServerManagement.UpdateSettings:input_type -> softserve.UpdateSettingsRequest
+	47, // 47: softserve.GitServerManagement.HealthCheck:input_type -> google.protobuf.Empty
+	1,  // 48: softserve.GitServerManagement.CreateRepository:output_type -> softserve.Repository
+	47, // 49: softserve.GitServerManagement.DeleteRepository:output_type -> google.protobuf.Empty
+	1,  // 50: softserve.GitServerManagement.GetRepository:output_type -> softserve.Repository
+	6,  // 51: softserve.GitServerManagement.ListRepositories:output_type -> softserve.ListRepositoriesResponse
+	1,  // 52: softserve.GitServerManagement.RenameRepository:output_type -> softserve.Repository
+	1,  // 53: softserve.GitServerManagement.UpdateRepository:output_type -> softserve.Repository
+	1,  // 54: softserve.GitServerManagement.ImportRepository:output_type -> softserve.Repository
+	43, // 55: softserve.GitServerManagement.GetTree:output_type -> softserve.GetTreeResponse
+	45, // 56: softserve.GitServerManagement.GetBlob:output_type -> softserve.GetBlobResponse
+	10, // 57: softserve.GitServerManagement.CreateUser:output_type -> softserve.User
+	47, // 58: softserve.GitServerManagement.DeleteUser:output_type -> google.protobuf.Empty
+	10, // 59: softserve.GitServerManagement.GetUser:output_type -> softserve.User
+	15, // 60: softserve.GitServerManagement.ListUsers:output_type -> softserve.ListUsersResponse
+	10, // 61: softserve.GitServerManagement.UpdateUser:output_type -> softserve.User
+	47, // 62: softserve.GitServerManagement.AddPublicKey:output_type -> google.protobuf.Empty
+	47, // 63: softserve.GitServerManagement.RemovePublicKey:output_type -> google.protobuf.Empty
+	20, // 64: softserve.GitServerManagement.ListPublicKeys:output_type -> softserve.ListPublicKeysResponse
+	47, // 65: softserve.GitServerManagement.AddCollaborator:output_type -> google.protobuf.Empty
+	47, // 66: softserve.GitServerManagement.RemoveCollaborator:output_type -> google.protobuf.Empty
+	25, // 67: softserve.GitServerManagement.ListCollaborators:output_type -> softserve.ListCollaboratorsResponse
+	26, // 68: softserve.GitServerManagement.CreateAccessToken:output_type -> softserve.AccessToken
+	47, // 69: softserve.GitServerManagement.DeleteAccessToken:output_type -> google.protobuf.Empty
+	30, // 70: softserve.GitServerManagement.ListAccessTokens:output_type -> softserve.ListAccessTokensResponse
+	31, // 71: softserve.GitServerManagement.CreateWebhook:output_type -> softserve.Webhook
+	47, // 72: softserve.GitServerManagement.DeleteWebhook:output_type -> google.protobuf.Empty
+	31, // 73: softserve.GitServerManagement.GetWebhook:output_type -> softserve.Webhook
+	36, // 74: softserve.GitServerManagement.ListWebhooks:output_type -> softserve.ListWebhooksResponse
+	31, // 75: softserve.GitServerManagement.UpdateWebhook:output_type -> softserve.Webhook
+	38, // 76: softserve.GitServerManagement.GetSettings:output_type -> softserve.ServerSettings
+	38, // 77: softserve.GitServerManagement.UpdateSettings:output_type -> softserve.ServerSettings
+	40, // 78: softserve.GitServerManagement.HealthCheck:output_type -> softserve.HealthCheckResponse
+	48, // [48:79] is the sub-list for method output_type
+	17, // [17:48] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_pkg_grpc_service_proto_init() }
@@ -2777,13 +3140,15 @@ func file_pkg_grpc_service_proto_init() {
 	file_pkg_grpc_service_proto_msgTypes[31].OneofWrappers = []any{}
 	file_pkg_grpc_service_proto_msgTypes[36].OneofWrappers = []any{}
 	file_pkg_grpc_service_proto_msgTypes[38].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[40].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[43].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pkg_grpc_service_proto_rawDesc), len(file_pkg_grpc_service_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   40,
+			NumMessages:   45,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -27,6 +27,11 @@ A complete gRPC management interface for the Soft Serve git server with full adm
 - ✅ Import repositories from remote URLs
 - ✅ Manage repository settings (visibility, description, project name)
 
+### Repository Content Browsing
+- ✅ Browse directory trees at any branch/tag/commit
+- ✅ Get file contents (with binary detection)
+- ✅ Navigate directory structure
+
 ### User Management
 - ✅ Create, delete, get, list, update users
 - ✅ Set admin privileges
@@ -192,6 +197,19 @@ _, err = client.AddCollaborator(ctx, &grpc.AddCollaboratorRequest{
     Username:    "bob",
     AccessLevel: grpc.AccessLevel_READ_WRITE,
 })
+
+// Browse repository tree
+tree, err := client.GetTree(ctx, &grpc.GetTreeRequest{
+    RepoName: "my-project",
+    Path:     "cmd/soft",
+})
+
+// Get file contents
+blob, err := client.GetBlob(ctx, &grpc.GetBlobRequest{
+    RepoName: "my-project",
+    Path:     "README.md",
+})
+fmt.Println(string(blob.Content))
 ```
 
 ## Build & Deploy

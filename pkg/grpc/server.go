@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/charmbracelet/soft-serve/pkg/access"
@@ -720,6 +721,160 @@ func (s *Server) HealthCheck(ctx context.Context, req *emptypb.Empty) (*HealthCh
 	return &HealthCheckResponse{
 		Status:  "ok",
 		Version: version.Version,
+	}, nil
+}
+
+// Repository Content Browsing
+
+func (s *Server) GetTree(ctx context.Context, req *GetTreeRequest) (*GetTreeResponse, error) {
+	if req.RepoName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name is required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Resolve reference (branch, tag, or commit)
+	ref := ""
+	refName := ""
+	if req.Ref != nil && *req.Ref != "" {
+		ref = *req.Ref
+		refName = *req.Ref
+	} else {
+		head, err := gitRepo.HEAD()
+		if err != nil {
+			return nil, status.Errorf(codes.NotFound, "HEAD not found: %v", err)
+		}
+		ref = head.ID
+		refName = head.Name().Short()
+	}
+
+	// Get tree at ref
+	tree, err := gitRepo.LsTree(ref)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "tree not found: %v", err)
+	}
+
+	// Navigate to path if specified
+	path := ""
+	if req.Path != nil && *req.Path != "" {
+		path = *req.Path
+		if path != "/" {
+			te, err := tree.TreeEntry(path)
+			if err != nil {
+				return nil, status.Errorf(codes.NotFound, "path not found: %v", err)
+			}
+			if te.Type() != "tree" {
+				return nil, status.Error(codes.InvalidArgument, "path is not a directory")
+			}
+			tree, err = tree.SubTree(path)
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "failed to get subtree: %v", err)
+			}
+		}
+	}
+
+	entries, err := tree.Entries()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to read tree entries: %v", err)
+	}
+
+	entries.Sort()
+
+	protoEntries := make([]*TreeEntry, len(entries))
+	for i, entry := range entries {
+		size := int64(entry.Size())
+		isDir := entry.Type() == "tree"
+		isSubmodule := entry.Type() == "commit"
+
+		protoEntries[i] = &TreeEntry{
+			Name:        entry.Name(),
+			Path:        fmt.Sprintf("%s", entry.Name()), // Just the name, not full path
+			Mode:        fmt.Sprintf("%o", entry.Mode()),
+			Size:        size,
+			IsDir:       isDir,
+			IsSubmodule: isSubmodule,
+		}
+	}
+
+	return &GetTreeResponse{
+		Entries: protoEntries,
+		Ref:     refName,
+	}, nil
+}
+
+func (s *Server) GetBlob(ctx context.Context, req *GetBlobRequest) (*GetBlobResponse, error) {
+	if req.RepoName == "" || req.Path == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and path are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Resolve reference
+	ref := ""
+	if req.Ref != nil && *req.Ref != "" {
+		ref = *req.Ref
+	} else {
+		head, err := gitRepo.HEAD()
+		if err != nil {
+			return nil, status.Errorf(codes.NotFound, "HEAD not found: %v", err)
+		}
+		ref = head.ID
+	}
+
+	// Get tree at ref
+	tree, err := gitRepo.LsTree(ref)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "tree not found: %v", err)
+	}
+
+	// Get the file entry
+	entry, err := tree.TreeEntry(req.Path)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "file not found: %v", err)
+	}
+
+	if entry.Type() == "tree" {
+		return nil, status.Error(codes.InvalidArgument, "path is a directory, use GetTree instead")
+	}
+
+	if entry.Type() == "commit" {
+		return nil, status.Error(codes.InvalidArgument, "path is a submodule")
+	}
+
+	// Get file contents
+	contents, err := entry.Contents()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to read file: %v", err)
+	}
+
+	// Check if binary
+	file := entry.File()
+	isBinary, err := file.IsBinary()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to check if binary: %v", err)
+	}
+
+	return &GetBlobResponse{
+		Content:  contents,
+		Size:     int64(len(contents)),
+		IsBinary: isBinary,
+		Path:     req.Path,
 	}, nil
 }
 

@@ -27,6 +27,8 @@ const (
 	GitServerManagement_RenameRepository_FullMethodName   = "/softserve.GitServerManagement/RenameRepository"
 	GitServerManagement_UpdateRepository_FullMethodName   = "/softserve.GitServerManagement/UpdateRepository"
 	GitServerManagement_ImportRepository_FullMethodName   = "/softserve.GitServerManagement/ImportRepository"
+	GitServerManagement_GetTree_FullMethodName            = "/softserve.GitServerManagement/GetTree"
+	GitServerManagement_GetBlob_FullMethodName            = "/softserve.GitServerManagement/GetBlob"
 	GitServerManagement_CreateUser_FullMethodName         = "/softserve.GitServerManagement/CreateUser"
 	GitServerManagement_DeleteUser_FullMethodName         = "/softserve.GitServerManagement/DeleteUser"
 	GitServerManagement_GetUser_FullMethodName            = "/softserve.GitServerManagement/GetUser"
@@ -65,6 +67,9 @@ type GitServerManagementClient interface {
 	RenameRepository(ctx context.Context, in *RenameRepositoryRequest, opts ...grpc.CallOption) (*Repository, error)
 	UpdateRepository(ctx context.Context, in *UpdateRepositoryRequest, opts ...grpc.CallOption) (*Repository, error)
 	ImportRepository(ctx context.Context, in *ImportRepositoryRequest, opts ...grpc.CallOption) (*Repository, error)
+	// Repository Content Browsing
+	GetTree(ctx context.Context, in *GetTreeRequest, opts ...grpc.CallOption) (*GetTreeResponse, error)
+	GetBlob(ctx context.Context, in *GetBlobRequest, opts ...grpc.CallOption) (*GetBlobResponse, error)
 	// User Management
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -168,6 +173,26 @@ func (c *gitServerManagementClient) ImportRepository(ctx context.Context, in *Im
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Repository)
 	err := c.cc.Invoke(ctx, GitServerManagement_ImportRepository_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetTree(ctx context.Context, in *GetTreeRequest, opts ...grpc.CallOption) (*GetTreeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTreeResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetTree_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetBlob(ctx context.Context, in *GetBlobRequest, opts ...grpc.CallOption) (*GetBlobResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBlobResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetBlob_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -408,6 +433,9 @@ type GitServerManagementServer interface {
 	RenameRepository(context.Context, *RenameRepositoryRequest) (*Repository, error)
 	UpdateRepository(context.Context, *UpdateRepositoryRequest) (*Repository, error)
 	ImportRepository(context.Context, *ImportRepositoryRequest) (*Repository, error)
+	// Repository Content Browsing
+	GetTree(context.Context, *GetTreeRequest) (*GetTreeResponse, error)
+	GetBlob(context.Context, *GetBlobRequest) (*GetBlobResponse, error)
 	// User Management
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
@@ -467,6 +495,12 @@ func (UnimplementedGitServerManagementServer) UpdateRepository(context.Context, 
 }
 func (UnimplementedGitServerManagementServer) ImportRepository(context.Context, *ImportRepositoryRequest) (*Repository, error) {
 	return nil, status.Error(codes.Unimplemented, "method ImportRepository not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetTree(context.Context, *GetTreeRequest) (*GetTreeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTree not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetBlob(context.Context, *GetBlobRequest) (*GetBlobResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBlob not implemented")
 }
 func (UnimplementedGitServerManagementServer) CreateUser(context.Context, *CreateUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
@@ -677,6 +711,42 @@ func _GitServerManagement_ImportRepository_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GitServerManagementServer).ImportRepository(ctx, req.(*ImportRepositoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetTree_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTreeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetTree(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetTree_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetTree(ctx, req.(*GetTreeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetBlob_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBlobRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetBlob(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetBlob_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetBlob(ctx, req.(*GetBlobRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1111,6 +1181,14 @@ var GitServerManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ImportRepository",
 			Handler:    _GitServerManagement_ImportRepository_Handler,
+		},
+		{
+			MethodName: "GetTree",
+			Handler:    _GitServerManagement_GetTree_Handler,
+		},
+		{
+			MethodName: "GetBlob",
+			Handler:    _GitServerManagement_GetBlob_Handler,
 		},
 		{
 			MethodName: "CreateUser",
