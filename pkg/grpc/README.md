@@ -43,6 +43,7 @@ The gRPC API provides comprehensive management capabilities:
 - `GetTree` - List directory contents at a specific path
 - `GetBlob` - Get file contents at a specific path
 - `GetBranches` - Get all branches for a repository
+- `ListCommits` - Get commit history with pagination (GitHub-style)
 - `ListUserRepositories` - List all repositories owned by a specific user
 
 ### User Management
@@ -270,6 +271,66 @@ grpcurl -plaintext -d '{
 ```
 
 This returns the same format as `ListRepositories` but filtered to only repos owned by the specified user.
+
+### Example: List Commits (Paginated)
+
+Get the latest 30 commits from the default branch (HEAD):
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo"
+}' localhost:23234 softserve.GitServerManagement/ListCommits
+```
+
+Get commits from a specific branch with custom limit:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "ref": "main",
+  "limit": 10
+}' localhost:23234 softserve.GitServerManagement/ListCommits
+```
+
+Get second page of commits (pagination):
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "ref": "develop",
+  "limit": 20,
+  "page": 2
+}' localhost:23234 softserve.GitServerManagement/ListCommits
+```
+
+Response includes commit details and pagination info:
+```json
+{
+  "commits": [
+    {
+      "sha": "abc123...",
+      "message": "Add new feature",
+      "author": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "when": "2026-02-04T10:30:00Z"
+      },
+      "committer": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "when": "2026-02-04T10:30:00Z"
+      },
+      "parentShas": ["def456..."]
+    }
+  ],
+  "page": 1,
+  "perPage": 30,
+  "hasMore": true
+}
+```
+
+**Pagination Parameters:**
+- `limit`: Number of commits per page (default: 30, max: 100)
+- `page`: Page number starting from 1 (default: 1)
+- `ref`: Branch, tag, or commit SHA to start from (default: HEAD)
+- `hasMore`: Indicates if more commits are available
 
 ## Access Levels
 

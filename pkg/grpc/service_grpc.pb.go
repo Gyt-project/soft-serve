@@ -30,6 +30,7 @@ const (
 	GitServerManagement_GetTree_FullMethodName              = "/softserve.GitServerManagement/GetTree"
 	GitServerManagement_GetBlob_FullMethodName              = "/softserve.GitServerManagement/GetBlob"
 	GitServerManagement_GetBranches_FullMethodName          = "/softserve.GitServerManagement/GetBranches"
+	GitServerManagement_ListCommits_FullMethodName          = "/softserve.GitServerManagement/ListCommits"
 	GitServerManagement_ListUserRepositories_FullMethodName = "/softserve.GitServerManagement/ListUserRepositories"
 	GitServerManagement_CreateUser_FullMethodName           = "/softserve.GitServerManagement/CreateUser"
 	GitServerManagement_DeleteUser_FullMethodName           = "/softserve.GitServerManagement/DeleteUser"
@@ -73,6 +74,7 @@ type GitServerManagementClient interface {
 	GetTree(ctx context.Context, in *GetTreeRequest, opts ...grpc.CallOption) (*GetTreeResponse, error)
 	GetBlob(ctx context.Context, in *GetBlobRequest, opts ...grpc.CallOption) (*GetBlobResponse, error)
 	GetBranches(ctx context.Context, in *GetBranchesRequest, opts ...grpc.CallOption) (*GetBranchesResponse, error)
+	ListCommits(ctx context.Context, in *ListCommitsRequest, opts ...grpc.CallOption) (*ListCommitsResponse, error)
 	ListUserRepositories(ctx context.Context, in *ListUserRepositoriesRequest, opts ...grpc.CallOption) (*ListRepositoriesResponse, error)
 	// User Management
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
@@ -207,6 +209,16 @@ func (c *gitServerManagementClient) GetBranches(ctx context.Context, in *GetBran
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBranchesResponse)
 	err := c.cc.Invoke(ctx, GitServerManagement_GetBranches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) ListCommits(ctx context.Context, in *ListCommitsRequest, opts ...grpc.CallOption) (*ListCommitsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCommitsResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_ListCommits_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -461,6 +473,7 @@ type GitServerManagementServer interface {
 	GetTree(context.Context, *GetTreeRequest) (*GetTreeResponse, error)
 	GetBlob(context.Context, *GetBlobRequest) (*GetBlobResponse, error)
 	GetBranches(context.Context, *GetBranchesRequest) (*GetBranchesResponse, error)
+	ListCommits(context.Context, *ListCommitsRequest) (*ListCommitsResponse, error)
 	ListUserRepositories(context.Context, *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error)
 	// User Management
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
@@ -530,6 +543,9 @@ func (UnimplementedGitServerManagementServer) GetBlob(context.Context, *GetBlobR
 }
 func (UnimplementedGitServerManagementServer) GetBranches(context.Context, *GetBranchesRequest) (*GetBranchesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBranches not implemented")
+}
+func (UnimplementedGitServerManagementServer) ListCommits(context.Context, *ListCommitsRequest) (*ListCommitsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListCommits not implemented")
 }
 func (UnimplementedGitServerManagementServer) ListUserRepositories(context.Context, *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserRepositories not implemented")
@@ -797,6 +813,24 @@ func _GitServerManagement_GetBranches_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GitServerManagementServer).GetBranches(ctx, req.(*GetBranchesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_ListCommits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCommitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).ListCommits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_ListCommits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).ListCommits(ctx, req.(*ListCommitsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1261,6 +1295,10 @@ var GitServerManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBranches",
 			Handler:    _GitServerManagement_GetBranches_Handler,
+		},
+		{
+			MethodName: "ListCommits",
+			Handler:    _GitServerManagement_ListCommits_Handler,
 		},
 		{
 			MethodName: "ListUserRepositories",

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/charmbracelet/soft-serve/git"
 	"github.com/charmbracelet/soft-serve/pkg/access"
 	"github.com/charmbracelet/soft-serve/pkg/backend"
 	"github.com/charmbracelet/soft-serve/pkg/proto"
@@ -953,6 +954,131 @@ func (s *Server) ListUserRepositories(ctx context.Context, req *ListUserReposito
 
 	return &ListRepositoriesResponse{
 		Repositories: protoRepos,
+	}, nil
+}
+
+// ListCommits returns commit history for a repository with pagination
+func (s *Server) ListCommits(ctx context.Context, req *ListCommitsRequest) (*ListCommitsResponse, error) {
+	if req.RepoName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name is required")
+	}
+
+	// Get repository
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	// Open git repository
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Determine reference to use (default to HEAD)
+	refName := "HEAD"
+	if req.Ref != nil && *req.Ref != "" {
+		refName = *req.Ref
+	}
+
+	// Resolve the ref to get a Reference object
+	var targetRef *git.Reference
+	
+	// Try to get HEAD first
+	if refName == "HEAD" {
+		targetRef, err = gitRepo.HEAD()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get HEAD: %v", err)
+		}
+	} else {
+		// Get all references to find the matching one
+		refs, err := gitRepo.References()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get references: %v", err)
+		}
+
+		// Look for matching branch or tag
+		for _, ref := range refs {
+			if ref.Name().Short() == refName || ref.Name().String() == refName || ref.ID == refName {
+				targetRef = ref
+				break
+			}
+		}
+		
+		// If still not found, try to resolve it as a commit SHA directly
+		if targetRef == nil {
+			// Try to get reference by checking if it exists as a commit
+			_, err := gitRepo.CommitByRevision(refName)
+			if err != nil {
+				return nil, status.Errorf(codes.NotFound, "reference not found: %v", err)
+			}
+			// Use HEAD but we'll get commits from this SHA
+			targetRef, err = gitRepo.HEAD()
+			if err != nil {
+				return nil, status.Errorf(codes.Internal, "failed to get reference: %v", err)
+			}
+			// Override the ref name to use the commit SHA
+			targetRef.ID = refName
+		}
+	}
+
+	// Set defaults for pagination
+	limit := int32(30)
+	if req.Limit != nil && *req.Limit > 0 {
+		limit = *req.Limit
+		if limit > 100 {
+			limit = 100 // Cap at 100
+		}
+	}
+
+	page := int32(1)
+	if req.Page != nil && *req.Page > 0 {
+		page = *req.Page
+	}
+
+	// Get commits using CommitsByPage
+	commits, err := gitRepo.CommitsByPage(targetRef, int(page), int(limit))
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get commits: %v", err)
+	}
+
+	// Convert to proto commits
+	protoCommits := make([]*Commit, len(commits))
+	for i, commit := range commits {
+		// Get parent IDs
+		parentSHAs := make([]string, commit.ParentsCount())
+		for j := 0; j < commit.ParentsCount(); j++ {
+			parentID, err := commit.ParentID(j)
+			if err == nil && parentID != nil {
+				parentSHAs[j] = parentID.String()
+			}
+		}
+
+		protoCommits[i] = &Commit{
+			Sha:     commit.ID.String(),
+			Message: commit.Message,
+			Author: &Author{
+				Name:  commit.Author.Name,
+				Email: commit.Author.Email,
+				When:  timestamppb.New(commit.Author.When),
+			},
+			Committer: &Author{
+				Name:  commit.Committer.Name,
+				Email: commit.Committer.Email,
+				When:  timestamppb.New(commit.Committer.When),
+			},
+			ParentShas: parentSHAs,
+		}
+	}
+
+	// Check if there are more commits
+	hasMore := len(commits) == int(limit)
+
+	return &ListCommitsResponse{
+		Commits: protoCommits,
+		Page:    page,
+		PerPage: limit,
+		HasMore: hasMore,
 	}, nil
 }
 

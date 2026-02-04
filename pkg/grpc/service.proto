@@ -22,6 +22,7 @@ service GitServerManagement {
   rpc GetTree(GetTreeRequest) returns (GetTreeResponse);
   rpc GetBlob(GetBlobRequest) returns (GetBlobResponse);
   rpc GetBranches(GetBranchesRequest) returns (GetBranchesResponse);
+  rpc ListCommits(ListCommitsRequest) returns (ListCommitsResponse);
   rpc ListUserRepositories(ListUserRepositoriesRequest) returns (ListRepositoriesResponse);
 
   // User Management
@@ -359,4 +360,33 @@ message GetBranchesResponse {
 // List user repositories
 message ListUserRepositoriesRequest {
   string username = 1;    // Username to get repositories for
+}
+
+// Commit Messages
+message Author {
+  string name = 1;
+  string email = 2;
+  google.protobuf.Timestamp when = 3;
+}
+
+message Commit {
+  string sha = 1;              // Commit SHA
+  Author author = 2;           // Author information
+  Author committer = 3;        // Committer information
+  string message = 4;          // Commit message
+  repeated string parent_shas = 5; // Parent commit SHAs
+}
+
+message ListCommitsRequest {
+  string repo_name = 1;        // Repository name
+  optional string ref = 2;     // Branch/tag/commit to start from (defaults to HEAD)
+  optional int32 limit = 3;    // Maximum number of commits to return (default: 30, max: 100)
+  optional int32 page = 4;     // Page number for pagination (starts at 1)
+}
+
+message ListCommitsResponse {
+  repeated Commit commits = 1;
+  int32 page = 2;              // Current page
+  int32 per_page = 3;          // Commits per page
+  bool has_more = 4;           // Whether there are more commits available
 }
