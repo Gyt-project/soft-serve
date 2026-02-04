@@ -27,7 +27,7 @@ func RunServer(ctx context.Context, be *backend.Backend) error {
 	}
 
 	grpcServer := grpc.NewServer()
-	RegisterGitServerManagementServer(grpcServer, NewServer(ctx, be))
+	RegisterGitServerManagementServer(grpcServer, NewServer(ctx, be, cfg))
 
 	// Register reflection service for grpcurl and other tools
 	reflection.Register(grpcServer)

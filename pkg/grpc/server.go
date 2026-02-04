@@ -9,6 +9,7 @@ import (
 	"github.com/Gyt-project/soft-serve/git"
 	"github.com/Gyt-project/soft-serve/pkg/access"
 	"github.com/Gyt-project/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/config"
 	"github.com/Gyt-project/soft-serve/pkg/proto"
 	"github.com/Gyt-project/soft-serve/pkg/version"
 	"github.com/Gyt-project/soft-serve/pkg/webhook"
@@ -23,13 +24,15 @@ import (
 type Server struct {
 	UnimplementedGitServerManagementServer
 	backend *backend.Backend
+	config  *config.Config
 	ctx     context.Context
 }
 
 // NewServer creates a new gRPC server instance
-func NewServer(ctx context.Context, be *backend.Backend) *Server {
+func NewServer(ctx context.Context, be *backend.Backend, cfg *config.Config) *Server {
 	return &Server{
 		backend: be,
+		config:  cfg,
 		ctx:     ctx,
 	}
 }
@@ -1420,11 +1423,29 @@ func (s *Server) GetCloneURLs(ctx context.Context, req *GetCloneURLsRequest) (*C
 		return nil, status.Error(codes.InvalidArgument, "repository name is required")
 	}
 
-	// Build URLs with default ports
-	// Note: In production, these should come from config
-	sshURL := fmt.Sprintf("ssh://localhost:23231/%s", req.RepoName)
-	httpURL := fmt.Sprintf("http://localhost:23232/%s.git", req.RepoName)
-	gitURL := fmt.Sprintf("git://localhost:9418/%s", req.RepoName)
+	// Build URLs from configuration
+	sshURL := ""
+	if s.config.SSH.PublicURL != "" {
+		sshURL = fmt.Sprintf("%s/%s", strings.TrimSuffix(s.config.SSH.PublicURL, "/"), req.RepoName)
+	} else if s.config.SSH.Enabled {
+		sshURL = fmt.Sprintf("ssh://%s/%s", s.config.SSH.ListenAddr, req.RepoName)
+	}
+
+	httpURL := ""
+	if s.config.HTTP.PublicURL != "" {
+		httpURL = fmt.Sprintf("%s/%s.git", strings.TrimSuffix(s.config.HTTP.PublicURL, "/"), req.RepoName)
+	} else if s.config.HTTP.Enabled {
+		scheme := "http"
+		if s.config.HTTP.TLSCertPath != "" && s.config.HTTP.TLSKeyPath != "" {
+			scheme = "https"
+		}
+		httpURL = fmt.Sprintf("%s://%s/%s.git", scheme, s.config.HTTP.ListenAddr, req.RepoName)
+	}
+
+	gitURL := ""
+	if s.config.Git.Enabled {
+		gitURL = fmt.Sprintf("git://%s/%s", s.config.Git.ListenAddr, req.RepoName)
+	}
 
 	return &CloneURLsResponse{
 		SshUrl:  sshURL,

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v6.33.4
-// source: pkg/grpc/service.proto
+// source: service.proto
 
 package grpc
 
@@ -1934,5 +1934,5 @@ var GitServerManagement_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/grpc/service.proto",
+	Metadata: "service.proto",
 }
