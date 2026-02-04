@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 
 	"charm.land/log/v2"
-	"github.com/charmbracelet/soft-serve/pkg/db"
-	"github.com/charmbracelet/soft-serve/pkg/db/models"
-	"github.com/charmbracelet/soft-serve/pkg/proto"
-	"github.com/charmbracelet/soft-serve/pkg/store"
-	"github.com/charmbracelet/soft-serve/pkg/utils"
-	"github.com/charmbracelet/soft-serve/pkg/webhook"
+	"github.com/Gyt-project/soft-serve/pkg/db"
+	"github.com/Gyt-project/soft-serve/pkg/db/models"
+	"github.com/Gyt-project/soft-serve/pkg/proto"
+	"github.com/Gyt-project/soft-serve/pkg/store"
+	"github.com/Gyt-project/soft-serve/pkg/utils"
+	"github.com/Gyt-project/soft-serve/pkg/webhook"
 	"github.com/google/uuid"
 )
 

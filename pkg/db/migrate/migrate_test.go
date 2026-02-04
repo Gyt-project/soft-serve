@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/charmbracelet/soft-serve/pkg/config"
-	"github.com/charmbracelet/soft-serve/pkg/db/internal/test"
+	"github.com/Gyt-project/soft-serve/pkg/config"
+	"github.com/Gyt-project/soft-serve/pkg/db/internal/test"
 )
 
 func TestMigrate(t *testing.T) {

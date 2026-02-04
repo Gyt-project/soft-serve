@@ -10,7 +10,7 @@ variables:
   main: "./cmd/soft"
   binary_name: soft
   description: "A tasty, self-hostable Git server for the command line🍦"
-  github_url: "https://github.com/charmbracelet/soft-serve"
+  github_url: "https://github.com/Gyt-project/soft-serve"
   maintainer: "Ayman Bagabas <ayman@charm.sh>"
   brew_commit_author_name: "Ayman Bagabas"
   brew_commit_author_email: "ayman@charm.sh"

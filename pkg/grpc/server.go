@@ -3,14 +3,15 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
-	"github.com/charmbracelet/soft-serve/git"
-	"github.com/charmbracelet/soft-serve/pkg/access"
-	"github.com/charmbracelet/soft-serve/pkg/backend"
-	"github.com/charmbracelet/soft-serve/pkg/proto"
-	"github.com/charmbracelet/soft-serve/pkg/version"
-	"github.com/charmbracelet/soft-serve/pkg/webhook"
+	"github.com/Gyt-project/soft-serve/git"
+	"github.com/Gyt-project/soft-serve/pkg/access"
+	"github.com/Gyt-project/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/proto"
+	"github.com/Gyt-project/soft-serve/pkg/version"
+	"github.com/Gyt-project/soft-serve/pkg/webhook"
 	"golang.org/x/crypto/ssh"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -983,7 +984,7 @@ func (s *Server) ListCommits(ctx context.Context, req *ListCommitsRequest) (*Lis
 
 	// Resolve the ref to get a Reference object
 	var targetRef *git.Reference
-	
+
 	// Try to get HEAD first
 	if refName == "HEAD" {
 		targetRef, err = gitRepo.HEAD()
@@ -1004,7 +1005,7 @@ func (s *Server) ListCommits(ctx context.Context, req *ListCommitsRequest) (*Lis
 				break
 			}
 		}
-		
+
 		// If still not found, try to resolve it as a commit SHA directly
 		if targetRef == nil {
 			// Try to get reference by checking if it exists as a commit
@@ -1079,6 +1080,736 @@ func (s *Server) ListCommits(ctx context.Context, req *ListCommitsRequest) (*Lis
 		Page:    page,
 		PerPage: limit,
 		HasMore: hasMore,
+	}, nil
+}
+
+// GetCommit returns detailed information about a single commit including diff
+func (s *Server) GetCommit(ctx context.Context, req *GetCommitRequest) (*CommitDetail, error) {
+	if req.RepoName == "" || req.Sha == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and SHA are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Get the commit
+	commit, err := gitRepo.CommitByRevision(req.Sha)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "commit not found: %v", err)
+	}
+
+	// Get diff for the commit
+	diff, err := gitRepo.Diff(commit)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get diff: %v", err)
+	}
+
+	// Get patch
+	patch, err := gitRepo.Patch(commit)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get patch: %v", err)
+	}
+
+	// Convert parent IDs
+	parentSHAs := make([]string, commit.ParentsCount())
+	for j := 0; j < commit.ParentsCount(); j++ {
+		parentID, err := commit.ParentID(j)
+		if err == nil && parentID != nil {
+			parentSHAs[j] = parentID.String()
+		}
+	}
+
+	// Build file diffs
+	fileDiffs := make([]*FileDiff, 0)
+	totalAdd := int32(0)
+	totalDel := int32(0)
+
+	for _, file := range diff.Files {
+		// Determine status based on file names
+		status := "modified"
+		oldName := file.OldName()
+		if oldName == "" || oldName == "/dev/null" {
+			status = "added"
+		} else if file.Name == "/dev/null" {
+			status = "deleted"
+		} else if oldName != file.Name {
+			status = "renamed"
+		}
+
+		fileDiff := &FileDiff{
+			Path:      file.Name,
+			Additions: int32(file.NumAdditions()),
+			Deletions: int32(file.NumDeletions()),
+			Status:    status,
+		}
+
+		if oldName != "" && oldName != file.Name && oldName != "/dev/null" {
+			fileDiff.OldPath = &oldName
+		}
+
+		fileDiffs = append(fileDiffs, fileDiff)
+		totalAdd += int32(file.NumAdditions())
+		totalDel += int32(file.NumDeletions())
+	}
+
+	return &CommitDetail{
+		Commit: &Commit{
+			Sha:     commit.ID.String(),
+			Message: commit.Message,
+			Author: &Author{
+				Name:  commit.Author.Name,
+				Email: commit.Author.Email,
+				When:  timestamppb.New(commit.Author.When),
+			},
+			Committer: &Author{
+				Name:  commit.Committer.Name,
+				Email: commit.Committer.Email,
+				When:  timestamppb.New(commit.Committer.When),
+			},
+			ParentShas: parentSHAs,
+		},
+		Files:          fileDiffs,
+		TotalAdditions: totalAdd,
+		TotalDeletions: totalDel,
+		FilesChanged:   int32(len(fileDiffs)),
+		Patch:          patch,
+	}, nil
+}
+
+// ListTags returns all tags in a repository
+func (s *Server) ListTags(ctx context.Context, req *ListTagsRequest) (*ListTagsResponse, error) {
+	if req.RepoName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name is required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	refs, err := gitRepo.References()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get references: %v", err)
+	}
+
+	tags := make([]*Tag, 0)
+	for _, ref := range refs {
+		if ref.IsTag() {
+			tag := &Tag{
+				Name:      ref.Name().Short(),
+				FullName:  ref.Name().String(),
+				CommitSha: ref.ID,
+			}
+			tags = append(tags, tag)
+		}
+	}
+
+	return &ListTagsResponse{Tags: tags}, nil
+}
+
+// GetTag returns detailed information about a specific tag
+func (s *Server) GetTag(ctx context.Context, req *GetTagRequest) (*TagDetail, error) {
+	if req.RepoName == "" || req.TagName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and tag name are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	refs, err := gitRepo.References()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get references: %v", err)
+	}
+
+	var targetRef *git.Reference
+	for _, ref := range refs {
+		if ref.IsTag() && (ref.Name().Short() == req.TagName || ref.Name().String() == req.TagName) {
+			targetRef = ref
+			break
+		}
+	}
+
+	if targetRef == nil {
+		return nil, status.Error(codes.NotFound, "tag not found")
+	}
+
+	commit, err := gitRepo.CommitByRevision(targetRef.ID)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get commit: %v", err)
+	}
+
+	parentSHAs := make([]string, commit.ParentsCount())
+	for j := 0; j < commit.ParentsCount(); j++ {
+		parentID, err := commit.ParentID(j)
+		if err == nil && parentID != nil {
+			parentSHAs[j] = parentID.String()
+		}
+	}
+
+	return &TagDetail{
+		Tag: &Tag{
+			Name:      targetRef.Name().Short(),
+			FullName:  targetRef.Name().String(),
+			CommitSha: targetRef.ID,
+		},
+		Commit: &Commit{
+			Sha:     commit.ID.String(),
+			Message: commit.Message,
+			Author: &Author{
+				Name:  commit.Author.Name,
+				Email: commit.Author.Email,
+				When:  timestamppb.New(commit.Author.When),
+			},
+			Committer: &Author{
+				Name:  commit.Committer.Name,
+				Email: commit.Committer.Email,
+				When:  timestamppb.New(commit.Committer.When),
+			},
+			ParentShas: parentSHAs,
+		},
+	}, nil
+}
+
+// CreateTag creates a new tag
+func (s *Server) CreateTag(ctx context.Context, req *CreateTagRequest) (*TagDetail, error) {
+	if req.RepoName == "" || req.TagName == "" || req.Target == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name, tag name, and target are required")
+	}
+
+	// Note: Tag creation via gRPC is not supported in this version
+	// Tags should be created via git push
+	return nil, status.Error(codes.Unimplemented, "tag creation is not supported via gRPC - use git push instead")
+}
+
+// DeleteTag deletes a tag
+func (s *Server) DeleteTag(ctx context.Context, req *DeleteTagRequest) (*emptypb.Empty, error) {
+	if req.RepoName == "" || req.TagName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and tag name are required")
+	}
+
+	// Note: Tag deletion via gRPC is not supported in this version
+	// Tags should be deleted via git push
+	return nil, status.Error(codes.Unimplemented, "tag deletion is not supported via gRPC - use git push instead")
+}
+
+// CompareBranches compares two branches
+func (s *Server) CompareBranches(ctx context.Context, req *CompareBranchesRequest) (*CompareResponse, error) {
+	if req.RepoName == "" || req.BaseBranch == "" || req.HeadBranch == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name, base branch, and head branch are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Resolve branches to commit SHAs
+	baseCommit, err := gitRepo.CommitByRevision(req.BaseBranch)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "base branch not found: %v", err)
+	}
+
+	headCommit, err := gitRepo.CommitByRevision(req.HeadBranch)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "head branch not found: %v", err)
+	}
+
+	return s.compareCommits(gitRepo, baseCommit.ID.String(), headCommit.ID.String())
+}
+
+// CompareCommits compares two commits
+func (s *Server) CompareCommits(ctx context.Context, req *CompareCommitsRequest) (*CompareResponse, error) {
+	if req.RepoName == "" || req.BaseSha == "" || req.HeadSha == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name, base SHA, and head SHA are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	return s.compareCommits(gitRepo, req.BaseSha, req.HeadSha)
+}
+
+// GetDefaultBranch returns the default branch of a repository
+func (s *Server) GetDefaultBranch(ctx context.Context, req *GetDefaultBranchRequest) (*DefaultBranchResponse, error) {
+	if req.RepoName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name is required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	head, err := gitRepo.HEAD()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get HEAD: %v", err)
+	}
+
+	return &DefaultBranchResponse{
+		BranchName: head.Name().Short(),
+	}, nil
+}
+
+// SetDefaultBranch sets the default branch of a repository
+func (s *Server) SetDefaultBranch(ctx context.Context, req *SetDefaultBranchRequest) (*DefaultBranchResponse, error) {
+	if req.RepoName == "" || req.BranchName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and branch name are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Set symbolic ref
+	branchRef := "refs/heads/" + req.BranchName
+	_, err = gitRepo.SymbolicRef("HEAD", branchRef)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to set default branch: %v", err)
+	}
+
+	return &DefaultBranchResponse{
+		BranchName: req.BranchName,
+	}, nil
+}
+
+// GetCloneURLs returns clone URLs for a repository
+func (s *Server) GetCloneURLs(ctx context.Context, req *GetCloneURLsRequest) (*CloneURLsResponse, error) {
+	if req.RepoName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name is required")
+	}
+
+	// Build URLs with default ports
+	// Note: In production, these should come from config
+	sshURL := fmt.Sprintf("ssh://localhost:23231/%s", req.RepoName)
+	httpURL := fmt.Sprintf("http://localhost:23232/%s.git", req.RepoName)
+	gitURL := fmt.Sprintf("git://localhost:9418/%s", req.RepoName)
+
+	return &CloneURLsResponse{
+		SshUrl:  sshURL,
+		HttpUrl: httpURL,
+		GitUrl:  gitURL,
+	}, nil
+}
+
+// GetRepositoryStats returns statistics about a repository
+func (s *Server) GetRepositoryStats(ctx context.Context, req *GetRepositoryStatsRequest) (*RepositoryStatsResponse, error) {
+	if req.RepoName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name is required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	// Get HEAD for commit count
+	head, err := gitRepo.HEAD()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get HEAD: %v", err)
+	}
+
+	// Count commits
+	commitCount, err := gitRepo.CountCommits(head)
+	if err != nil {
+		commitCount = 0
+	}
+
+	// Get all references
+	refs, err := gitRepo.References()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get references: %v", err)
+	}
+
+	branchCount := 0
+	tagCount := 0
+	for _, ref := range refs {
+		if ref.IsBranch() {
+			branchCount++
+		} else if ref.IsTag() {
+			tagCount++
+		}
+	}
+
+	// Get latest commit for last commit time
+	commits, err := gitRepo.CommitsByPage(head, 1, 1)
+	var lastCommit *timestamppb.Timestamp
+	if err == nil && len(commits) > 0 {
+		lastCommit = timestamppb.New(commits[0].Committer.When)
+	}
+
+	return &RepositoryStatsResponse{
+		SizeBytes:        0, // Would need to walk the repo directory
+		CommitCount:      commitCount,
+		BranchCount:      int32(branchCount),
+		TagCount:         int32(tagCount),
+		ContributorCount: 0, // Would need to analyze all commits
+		LastCommit:       lastCommit,
+	}, nil
+}
+
+// GetFileHistory returns commit history for a specific file
+func (s *Server) GetFileHistory(ctx context.Context, req *GetFileHistoryRequest) (*GetFileHistoryResponse, error) {
+	if req.RepoName == "" || req.Path == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and path are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	refName := "HEAD"
+	if req.Ref != nil && *req.Ref != "" {
+		refName = *req.Ref
+	}
+
+	limit := int32(50)
+	if req.Limit != nil && *req.Limit > 0 {
+		limit = *req.Limit
+	}
+
+	// Get all commits and filter manually (simplified implementation)
+	// In a production system, this should use git log --follow -- path
+	var targetRef *git.Reference
+	if refName == "HEAD" {
+		targetRef, err = gitRepo.HEAD()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get HEAD: %v", err)
+		}
+	} else {
+		refs, err := gitRepo.References()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get references: %v", err)
+		}
+		for _, ref := range refs {
+			if ref.Name().Short() == refName {
+				targetRef = ref
+				break
+			}
+		}
+		if targetRef == nil {
+			return nil, status.Error(codes.NotFound, "reference not found")
+		}
+	}
+
+	// Get all commits (simplified - doesn't filter by file)
+	commits, err := gitRepo.CommitsByPage(targetRef, 1, int(limit))
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get commits: %v", err)
+	}
+
+	protoCommits := make([]*Commit, len(commits))
+	for i, commit := range commits {
+		parentSHAs := make([]string, commit.ParentsCount())
+		for j := 0; j < commit.ParentsCount(); j++ {
+			parentID, err := commit.ParentID(j)
+			if err == nil && parentID != nil {
+				parentSHAs[j] = parentID.String()
+			}
+		}
+
+		protoCommits[i] = &Commit{
+			Sha:     commit.ID.String(),
+			Message: commit.Message,
+			Author: &Author{
+				Name:  commit.Author.Name,
+				Email: commit.Author.Email,
+				When:  timestamppb.New(commit.Author.When),
+			},
+			Committer: &Author{
+				Name:  commit.Committer.Name,
+				Email: commit.Committer.Email,
+				When:  timestamppb.New(commit.Committer.When),
+			},
+			ParentShas: parentSHAs,
+		}
+	}
+
+	return &GetFileHistoryResponse{
+		Commits: protoCommits,
+	}, nil
+}
+
+// SearchCommits searches for commits by message or author
+func (s *Server) SearchCommits(ctx context.Context, req *SearchCommitsRequest) (*ListCommitsResponse, error) {
+	if req.RepoName == "" || req.Query == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and query are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	refName := "HEAD"
+	if req.Ref != nil && *req.Ref != "" {
+		refName = *req.Ref
+	}
+
+	limit := int32(30)
+	if req.Limit != nil && *req.Limit > 0 {
+		limit = *req.Limit
+		if limit > 100 {
+			limit = 100
+		}
+	}
+
+	// Get reference
+	var targetRef *git.Reference
+	if refName == "HEAD" {
+		targetRef, err = gitRepo.HEAD()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get HEAD: %v", err)
+		}
+	} else {
+		refs, err := gitRepo.References()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "failed to get references: %v", err)
+		}
+
+		for _, ref := range refs {
+			if ref.Name().Short() == refName || ref.Name().String() == refName {
+				targetRef = ref
+				break
+			}
+		}
+
+		if targetRef == nil {
+			return nil, status.Error(codes.NotFound, "reference not found")
+		}
+	}
+
+	// Get commits and filter
+	commits, err := gitRepo.CommitsByPage(targetRef, 1, int(limit)*5) // Get more to filter
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get commits: %v", err)
+	}
+
+	// Filter commits by query
+	filteredCommits := make([]*Commit, 0)
+	query := req.Query
+	author := ""
+	if req.Author != nil {
+		author = *req.Author
+	}
+
+	for _, commit := range commits {
+		if len(filteredCommits) >= int(limit) {
+			break
+		}
+
+		// Check if commit matches query
+		matchesQuery := strings.Contains(strings.ToLower(commit.Message), strings.ToLower(query))
+		matchesAuthor := author == "" || strings.Contains(strings.ToLower(commit.Author.Name), strings.ToLower(author))
+
+		if matchesQuery && matchesAuthor {
+			parentSHAs := make([]string, commit.ParentsCount())
+			for j := 0; j < commit.ParentsCount(); j++ {
+				parentID, err := commit.ParentID(j)
+				if err == nil && parentID != nil {
+					parentSHAs[j] = parentID.String()
+				}
+			}
+
+			filteredCommits = append(filteredCommits, &Commit{
+				Sha:     commit.ID.String(),
+				Message: commit.Message,
+				Author: &Author{
+					Name:  commit.Author.Name,
+					Email: commit.Author.Email,
+					When:  timestamppb.New(commit.Author.When),
+				},
+				Committer: &Author{
+					Name:  commit.Committer.Name,
+					Email: commit.Committer.Email,
+					When:  timestamppb.New(commit.Committer.When),
+				},
+				ParentShas: parentSHAs,
+			})
+		}
+	}
+
+	return &ListCommitsResponse{
+		Commits: filteredCommits,
+		Page:    1,
+		PerPage: limit,
+		HasMore: len(filteredCommits) == int(limit),
+	}, nil
+}
+
+// CheckPath checks if a path exists in a repository
+func (s *Server) CheckPath(ctx context.Context, req *CheckPathRequest) (*CheckPathResponse, error) {
+	if req.RepoName == "" || req.Path == "" {
+		return nil, status.Error(codes.InvalidArgument, "repository name and path are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	refName := "HEAD"
+	if req.Ref != nil && *req.Ref != "" {
+		refName = *req.Ref
+	}
+
+	tree, err := gitRepo.LsTree(refName)
+	if err != nil {
+		return &CheckPathResponse{Exists: false}, nil
+	}
+
+	// Navigate to the path
+	if req.Path != "" && req.Path != "." && req.Path != "/" {
+		tree, err = tree.SubTree(req.Path)
+		if err != nil {
+			// Try as a file
+			parentTree := tree
+			entry, _ := parentTree.TreeEntry(req.Path)
+			if entry == nil {
+				return &CheckPathResponse{Exists: false}, nil
+			}
+
+			isFile := entry.Type() == "blob"
+			size := int64(0)
+			if isFile {
+				file := entry.File()
+				size = file.Size()
+			}
+
+			return &CheckPathResponse{
+				Exists: true,
+				IsDir:  false,
+				IsFile: isFile,
+				Size:   &size,
+			}, nil
+		}
+	}
+
+	// It's a directory
+	return &CheckPathResponse{
+		Exists: true,
+		IsDir:  true,
+		IsFile: false,
+	}, nil
+}
+
+// Helper function for comparing commits
+func (s *Server) compareCommits(gitRepo *git.Repository, baseSHA, headSHA string) (*CompareResponse, error) {
+	// Simplified implementation - get head commit for diff
+	headCommit, err := gitRepo.CommitByRevision(headSHA)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get head commit: %v", err)
+	}
+
+	// Get diff for head commit
+	diff, err := gitRepo.Diff(headCommit)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get diff: %v", err)
+	}
+
+	// Build file diffs
+	fileDiffs := make([]*FileDiff, 0)
+	totalAdd := int32(0)
+	totalDel := int32(0)
+
+	for _, file := range diff.Files {
+		// Determine status based on file names
+		status := "modified"
+		oldName := file.OldName()
+		if oldName == "" || oldName == "/dev/null" {
+			status = "added"
+		} else if file.Name == "/dev/null" {
+			status = "deleted"
+		} else if oldName != file.Name {
+			status = "renamed"
+		}
+
+		fileDiff := &FileDiff{
+			Path:      file.Name,
+			Additions: int32(file.NumAdditions()),
+			Deletions: int32(file.NumDeletions()),
+			Status:    status,
+		}
+
+		if oldName != "" && oldName != file.Name && oldName != "/dev/null" {
+			fileDiff.OldPath = &oldName
+		}
+
+		fileDiffs = append(fileDiffs, fileDiff)
+		totalAdd += int32(file.NumAdditions())
+		totalDel += int32(file.NumDeletions())
+	}
+
+	// Return simplified response (commits list would need more complex git operations)
+	return &CompareResponse{
+		Commits:        []*Commit{}, // Simplified - would need git rev-list
+		Files:          fileDiffs,
+		TotalAdditions: totalAdd,
+		TotalDeletions: totalDel,
+		FilesChanged:   int32(len(fileDiffs)),
+		CommitsAhead:   0, // Simplified
 	}, nil
 }
 

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Gyt-project/soft-serve/git"
+	"github.com/Gyt-project/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/proto"
+	"github.com/Gyt-project/soft-serve/pkg/webhook"
 	gitm "github.com/aymanbagabas/git-module"
-	"github.com/charmbracelet/soft-serve/git"
-	"github.com/charmbracelet/soft-serve/pkg/backend"
-	"github.com/charmbracelet/soft-serve/pkg/proto"
-	"github.com/charmbracelet/soft-serve/pkg/webhook"
 	"github.com/spf13/cobra"
 )
 

@@ -31,7 +31,21 @@ const (
 	GitServerManagement_GetBlob_FullMethodName              = "/softserve.GitServerManagement/GetBlob"
 	GitServerManagement_GetBranches_FullMethodName          = "/softserve.GitServerManagement/GetBranches"
 	GitServerManagement_ListCommits_FullMethodName          = "/softserve.GitServerManagement/ListCommits"
+	GitServerManagement_GetCommit_FullMethodName            = "/softserve.GitServerManagement/GetCommit"
 	GitServerManagement_ListUserRepositories_FullMethodName = "/softserve.GitServerManagement/ListUserRepositories"
+	GitServerManagement_ListTags_FullMethodName             = "/softserve.GitServerManagement/ListTags"
+	GitServerManagement_GetTag_FullMethodName               = "/softserve.GitServerManagement/GetTag"
+	GitServerManagement_CreateTag_FullMethodName            = "/softserve.GitServerManagement/CreateTag"
+	GitServerManagement_DeleteTag_FullMethodName            = "/softserve.GitServerManagement/DeleteTag"
+	GitServerManagement_CompareBranches_FullMethodName      = "/softserve.GitServerManagement/CompareBranches"
+	GitServerManagement_CompareCommits_FullMethodName       = "/softserve.GitServerManagement/CompareCommits"
+	GitServerManagement_GetDefaultBranch_FullMethodName     = "/softserve.GitServerManagement/GetDefaultBranch"
+	GitServerManagement_SetDefaultBranch_FullMethodName     = "/softserve.GitServerManagement/SetDefaultBranch"
+	GitServerManagement_GetCloneURLs_FullMethodName         = "/softserve.GitServerManagement/GetCloneURLs"
+	GitServerManagement_GetRepositoryStats_FullMethodName   = "/softserve.GitServerManagement/GetRepositoryStats"
+	GitServerManagement_GetFileHistory_FullMethodName       = "/softserve.GitServerManagement/GetFileHistory"
+	GitServerManagement_SearchCommits_FullMethodName        = "/softserve.GitServerManagement/SearchCommits"
+	GitServerManagement_CheckPath_FullMethodName            = "/softserve.GitServerManagement/CheckPath"
 	GitServerManagement_CreateUser_FullMethodName           = "/softserve.GitServerManagement/CreateUser"
 	GitServerManagement_DeleteUser_FullMethodName           = "/softserve.GitServerManagement/DeleteUser"
 	GitServerManagement_GetUser_FullMethodName              = "/softserve.GitServerManagement/GetUser"
@@ -75,7 +89,25 @@ type GitServerManagementClient interface {
 	GetBlob(ctx context.Context, in *GetBlobRequest, opts ...grpc.CallOption) (*GetBlobResponse, error)
 	GetBranches(ctx context.Context, in *GetBranchesRequest, opts ...grpc.CallOption) (*GetBranchesResponse, error)
 	ListCommits(ctx context.Context, in *ListCommitsRequest, opts ...grpc.CallOption) (*ListCommitsResponse, error)
+	GetCommit(ctx context.Context, in *GetCommitRequest, opts ...grpc.CallOption) (*CommitDetail, error)
 	ListUserRepositories(ctx context.Context, in *ListUserRepositoriesRequest, opts ...grpc.CallOption) (*ListRepositoriesResponse, error)
+	// Tags
+	ListTags(ctx context.Context, in *ListTagsRequest, opts ...grpc.CallOption) (*ListTagsResponse, error)
+	GetTag(ctx context.Context, in *GetTagRequest, opts ...grpc.CallOption) (*TagDetail, error)
+	CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*TagDetail, error)
+	DeleteTag(ctx context.Context, in *DeleteTagRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Diff & Compare
+	CompareBranches(ctx context.Context, in *CompareBranchesRequest, opts ...grpc.CallOption) (*CompareResponse, error)
+	CompareCommits(ctx context.Context, in *CompareCommitsRequest, opts ...grpc.CallOption) (*CompareResponse, error)
+	// Repository Info
+	GetDefaultBranch(ctx context.Context, in *GetDefaultBranchRequest, opts ...grpc.CallOption) (*DefaultBranchResponse, error)
+	SetDefaultBranch(ctx context.Context, in *SetDefaultBranchRequest, opts ...grpc.CallOption) (*DefaultBranchResponse, error)
+	GetCloneURLs(ctx context.Context, in *GetCloneURLsRequest, opts ...grpc.CallOption) (*CloneURLsResponse, error)
+	GetRepositoryStats(ctx context.Context, in *GetRepositoryStatsRequest, opts ...grpc.CallOption) (*RepositoryStatsResponse, error)
+	// Advanced Operations
+	GetFileHistory(ctx context.Context, in *GetFileHistoryRequest, opts ...grpc.CallOption) (*GetFileHistoryResponse, error)
+	SearchCommits(ctx context.Context, in *SearchCommitsRequest, opts ...grpc.CallOption) (*ListCommitsResponse, error)
+	CheckPath(ctx context.Context, in *CheckPathRequest, opts ...grpc.CallOption) (*CheckPathResponse, error)
 	// User Management
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -225,10 +257,150 @@ func (c *gitServerManagementClient) ListCommits(ctx context.Context, in *ListCom
 	return out, nil
 }
 
+func (c *gitServerManagementClient) GetCommit(ctx context.Context, in *GetCommitRequest, opts ...grpc.CallOption) (*CommitDetail, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CommitDetail)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetCommit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gitServerManagementClient) ListUserRepositories(ctx context.Context, in *ListUserRepositoriesRequest, opts ...grpc.CallOption) (*ListRepositoriesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListRepositoriesResponse)
 	err := c.cc.Invoke(ctx, GitServerManagement_ListUserRepositories_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) ListTags(ctx context.Context, in *ListTagsRequest, opts ...grpc.CallOption) (*ListTagsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTagsResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_ListTags_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetTag(ctx context.Context, in *GetTagRequest, opts ...grpc.CallOption) (*TagDetail, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TagDetail)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*TagDetail, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TagDetail)
+	err := c.cc.Invoke(ctx, GitServerManagement_CreateTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) DeleteTag(ctx context.Context, in *DeleteTagRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, GitServerManagement_DeleteTag_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) CompareBranches(ctx context.Context, in *CompareBranchesRequest, opts ...grpc.CallOption) (*CompareResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompareResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_CompareBranches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) CompareCommits(ctx context.Context, in *CompareCommitsRequest, opts ...grpc.CallOption) (*CompareResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompareResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_CompareCommits_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetDefaultBranch(ctx context.Context, in *GetDefaultBranchRequest, opts ...grpc.CallOption) (*DefaultBranchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DefaultBranchResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetDefaultBranch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) SetDefaultBranch(ctx context.Context, in *SetDefaultBranchRequest, opts ...grpc.CallOption) (*DefaultBranchResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DefaultBranchResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_SetDefaultBranch_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetCloneURLs(ctx context.Context, in *GetCloneURLsRequest, opts ...grpc.CallOption) (*CloneURLsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CloneURLsResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetCloneURLs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetRepositoryStats(ctx context.Context, in *GetRepositoryStatsRequest, opts ...grpc.CallOption) (*RepositoryStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RepositoryStatsResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetRepositoryStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) GetFileHistory(ctx context.Context, in *GetFileHistoryRequest, opts ...grpc.CallOption) (*GetFileHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetFileHistoryResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_GetFileHistory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) SearchCommits(ctx context.Context, in *SearchCommitsRequest, opts ...grpc.CallOption) (*ListCommitsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCommitsResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_SearchCommits_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gitServerManagementClient) CheckPath(ctx context.Context, in *CheckPathRequest, opts ...grpc.CallOption) (*CheckPathResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckPathResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_CheckPath_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -474,7 +646,25 @@ type GitServerManagementServer interface {
 	GetBlob(context.Context, *GetBlobRequest) (*GetBlobResponse, error)
 	GetBranches(context.Context, *GetBranchesRequest) (*GetBranchesResponse, error)
 	ListCommits(context.Context, *ListCommitsRequest) (*ListCommitsResponse, error)
+	GetCommit(context.Context, *GetCommitRequest) (*CommitDetail, error)
 	ListUserRepositories(context.Context, *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error)
+	// Tags
+	ListTags(context.Context, *ListTagsRequest) (*ListTagsResponse, error)
+	GetTag(context.Context, *GetTagRequest) (*TagDetail, error)
+	CreateTag(context.Context, *CreateTagRequest) (*TagDetail, error)
+	DeleteTag(context.Context, *DeleteTagRequest) (*emptypb.Empty, error)
+	// Diff & Compare
+	CompareBranches(context.Context, *CompareBranchesRequest) (*CompareResponse, error)
+	CompareCommits(context.Context, *CompareCommitsRequest) (*CompareResponse, error)
+	// Repository Info
+	GetDefaultBranch(context.Context, *GetDefaultBranchRequest) (*DefaultBranchResponse, error)
+	SetDefaultBranch(context.Context, *SetDefaultBranchRequest) (*DefaultBranchResponse, error)
+	GetCloneURLs(context.Context, *GetCloneURLsRequest) (*CloneURLsResponse, error)
+	GetRepositoryStats(context.Context, *GetRepositoryStatsRequest) (*RepositoryStatsResponse, error)
+	// Advanced Operations
+	GetFileHistory(context.Context, *GetFileHistoryRequest) (*GetFileHistoryResponse, error)
+	SearchCommits(context.Context, *SearchCommitsRequest) (*ListCommitsResponse, error)
+	CheckPath(context.Context, *CheckPathRequest) (*CheckPathResponse, error)
 	// User Management
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
@@ -547,8 +737,50 @@ func (UnimplementedGitServerManagementServer) GetBranches(context.Context, *GetB
 func (UnimplementedGitServerManagementServer) ListCommits(context.Context, *ListCommitsRequest) (*ListCommitsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCommits not implemented")
 }
+func (UnimplementedGitServerManagementServer) GetCommit(context.Context, *GetCommitRequest) (*CommitDetail, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCommit not implemented")
+}
 func (UnimplementedGitServerManagementServer) ListUserRepositories(context.Context, *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListUserRepositories not implemented")
+}
+func (UnimplementedGitServerManagementServer) ListTags(context.Context, *ListTagsRequest) (*ListTagsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTags not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetTag(context.Context, *GetTagRequest) (*TagDetail, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTag not implemented")
+}
+func (UnimplementedGitServerManagementServer) CreateTag(context.Context, *CreateTagRequest) (*TagDetail, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateTag not implemented")
+}
+func (UnimplementedGitServerManagementServer) DeleteTag(context.Context, *DeleteTagRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteTag not implemented")
+}
+func (UnimplementedGitServerManagementServer) CompareBranches(context.Context, *CompareBranchesRequest) (*CompareResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompareBranches not implemented")
+}
+func (UnimplementedGitServerManagementServer) CompareCommits(context.Context, *CompareCommitsRequest) (*CompareResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CompareCommits not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetDefaultBranch(context.Context, *GetDefaultBranchRequest) (*DefaultBranchResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetDefaultBranch not implemented")
+}
+func (UnimplementedGitServerManagementServer) SetDefaultBranch(context.Context, *SetDefaultBranchRequest) (*DefaultBranchResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetDefaultBranch not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetCloneURLs(context.Context, *GetCloneURLsRequest) (*CloneURLsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCloneURLs not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetRepositoryStats(context.Context, *GetRepositoryStatsRequest) (*RepositoryStatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRepositoryStats not implemented")
+}
+func (UnimplementedGitServerManagementServer) GetFileHistory(context.Context, *GetFileHistoryRequest) (*GetFileHistoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetFileHistory not implemented")
+}
+func (UnimplementedGitServerManagementServer) SearchCommits(context.Context, *SearchCommitsRequest) (*ListCommitsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchCommits not implemented")
+}
+func (UnimplementedGitServerManagementServer) CheckPath(context.Context, *CheckPathRequest) (*CheckPathResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckPath not implemented")
 }
 func (UnimplementedGitServerManagementServer) CreateUser(context.Context, *CreateUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
@@ -835,6 +1067,24 @@ func _GitServerManagement_ListCommits_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GitServerManagement_GetCommit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetCommit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetCommit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetCommit(ctx, req.(*GetCommitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GitServerManagement_ListUserRepositories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserRepositoriesRequest)
 	if err := dec(in); err != nil {
@@ -849,6 +1099,240 @@ func _GitServerManagement_ListUserRepositories_Handler(srv interface{}, ctx cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GitServerManagementServer).ListUserRepositories(ctx, req.(*ListUserRepositoriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_ListTags_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTagsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).ListTags(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_ListTags_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).ListTags(ctx, req.(*ListTagsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetTag(ctx, req.(*GetTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_CreateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).CreateTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_CreateTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).CreateTag(ctx, req.(*CreateTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_DeleteTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).DeleteTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_DeleteTag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).DeleteTag(ctx, req.(*DeleteTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_CompareBranches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompareBranchesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).CompareBranches(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_CompareBranches_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).CompareBranches(ctx, req.(*CompareBranchesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_CompareCommits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompareCommitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).CompareCommits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_CompareCommits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).CompareCommits(ctx, req.(*CompareCommitsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetDefaultBranch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDefaultBranchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetDefaultBranch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetDefaultBranch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetDefaultBranch(ctx, req.(*GetDefaultBranchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_SetDefaultBranch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDefaultBranchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).SetDefaultBranch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_SetDefaultBranch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).SetDefaultBranch(ctx, req.(*SetDefaultBranchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetCloneURLs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCloneURLsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetCloneURLs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetCloneURLs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetCloneURLs(ctx, req.(*GetCloneURLsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetRepositoryStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRepositoryStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetRepositoryStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetRepositoryStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetRepositoryStats(ctx, req.(*GetRepositoryStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_GetFileHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFileHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).GetFileHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_GetFileHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).GetFileHistory(ctx, req.(*GetFileHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_SearchCommits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchCommitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).SearchCommits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_SearchCommits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).SearchCommits(ctx, req.(*SearchCommitsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GitServerManagement_CheckPath_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPathRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).CheckPath(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_CheckPath_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).CheckPath(ctx, req.(*CheckPathRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1301,8 +1785,64 @@ var GitServerManagement_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _GitServerManagement_ListCommits_Handler,
 		},
 		{
+			MethodName: "GetCommit",
+			Handler:    _GitServerManagement_GetCommit_Handler,
+		},
+		{
 			MethodName: "ListUserRepositories",
 			Handler:    _GitServerManagement_ListUserRepositories_Handler,
+		},
+		{
+			MethodName: "ListTags",
+			Handler:    _GitServerManagement_ListTags_Handler,
+		},
+		{
+			MethodName: "GetTag",
+			Handler:    _GitServerManagement_GetTag_Handler,
+		},
+		{
+			MethodName: "CreateTag",
+			Handler:    _GitServerManagement_CreateTag_Handler,
+		},
+		{
+			MethodName: "DeleteTag",
+			Handler:    _GitServerManagement_DeleteTag_Handler,
+		},
+		{
+			MethodName: "CompareBranches",
+			Handler:    _GitServerManagement_CompareBranches_Handler,
+		},
+		{
+			MethodName: "CompareCommits",
+			Handler:    _GitServerManagement_CompareCommits_Handler,
+		},
+		{
+			MethodName: "GetDefaultBranch",
+			Handler:    _GitServerManagement_GetDefaultBranch_Handler,
+		},
+		{
+			MethodName: "SetDefaultBranch",
+			Handler:    _GitServerManagement_SetDefaultBranch_Handler,
+		},
+		{
+			MethodName: "GetCloneURLs",
+			Handler:    _GitServerManagement_GetCloneURLs_Handler,
+		},
+		{
+			MethodName: "GetRepositoryStats",
+			Handler:    _GitServerManagement_GetRepositoryStats_Handler,
+		},
+		{
+			MethodName: "GetFileHistory",
+			Handler:    _GitServerManagement_GetFileHistory_Handler,
+		},
+		{
+			MethodName: "SearchCommits",
+			Handler:    _GitServerManagement_SearchCommits_Handler,
+		},
+		{
+			MethodName: "CheckPath",
+			Handler:    _GitServerManagement_CheckPath_Handler,
 		},
 		{
 			MethodName: "CreateUser",

@@ -45,7 +45,7 @@ services:
 ```
 
 [docker]: https://hub.docker.com/r/charmcli/soft-serve
-[ghcr]: https://github.com/charmbracelet/soft-serve/pkgs/container/soft-serve
+[ghcr]: https://github.com/Gyt-project/soft-serve/pkgs/container/soft-serve
 
 
 > **Warning**

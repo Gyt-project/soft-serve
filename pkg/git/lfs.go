@@ -13,13 +13,13 @@ import (
 
 	"charm.land/log/v2"
 	"github.com/charmbracelet/git-lfs-transfer/transfer"
-	"github.com/charmbracelet/soft-serve/pkg/config"
-	"github.com/charmbracelet/soft-serve/pkg/db"
-	"github.com/charmbracelet/soft-serve/pkg/db/models"
-	"github.com/charmbracelet/soft-serve/pkg/lfs"
-	"github.com/charmbracelet/soft-serve/pkg/proto"
-	"github.com/charmbracelet/soft-serve/pkg/storage"
-	"github.com/charmbracelet/soft-serve/pkg/store"
+	"github.com/Gyt-project/soft-serve/pkg/config"
+	"github.com/Gyt-project/soft-serve/pkg/db"
+	"github.com/Gyt-project/soft-serve/pkg/db/models"
+	"github.com/Gyt-project/soft-serve/pkg/lfs"
+	"github.com/Gyt-project/soft-serve/pkg/proto"
+	"github.com/Gyt-project/soft-serve/pkg/storage"
+	"github.com/Gyt-project/soft-serve/pkg/store"
 )
 
 // lfsTransfer implements transfer.Backend.

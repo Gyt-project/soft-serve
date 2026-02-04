@@ -7,12 +7,12 @@ import (
 	"charm.land/bubbles/v2/spinner"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+	"github.com/Gyt-project/soft-serve/git"
+	"github.com/Gyt-project/soft-serve/pkg/proto"
+	"github.com/Gyt-project/soft-serve/pkg/ui/common"
+	"github.com/Gyt-project/soft-serve/pkg/ui/components/code"
+	"github.com/Gyt-project/soft-serve/pkg/ui/components/selector"
 	gitm "github.com/aymanbagabas/git-module"
-	"github.com/charmbracelet/soft-serve/git"
-	"github.com/charmbracelet/soft-serve/pkg/proto"
-	"github.com/charmbracelet/soft-serve/pkg/ui/common"
-	"github.com/charmbracelet/soft-serve/pkg/ui/components/code"
-	"github.com/charmbracelet/soft-serve/pkg/ui/components/selector"
 )
 
 type stashState int

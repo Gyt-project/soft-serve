@@ -6,11 +6,11 @@ import (
 	"time"
 
 	gansi "charm.land/glamour/v2/ansi"
-	"github.com/charmbracelet/soft-serve/git"
-	"github.com/charmbracelet/soft-serve/pkg/backend"
-	"github.com/charmbracelet/soft-serve/pkg/ui/common"
-	"github.com/charmbracelet/soft-serve/pkg/ui/styles"
-	"github.com/charmbracelet/soft-serve/pkg/utils"
+	"github.com/Gyt-project/soft-serve/git"
+	"github.com/Gyt-project/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/ui/common"
+	"github.com/Gyt-project/soft-serve/pkg/ui/styles"
+	"github.com/Gyt-project/soft-serve/pkg/utils"
 	"github.com/spf13/cobra"
 )
 

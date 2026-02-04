@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2/table"
-	"github.com/charmbracelet/soft-serve/pkg/backend"
-	"github.com/charmbracelet/soft-serve/pkg/utils"
-	"github.com/charmbracelet/soft-serve/pkg/webhook"
+	"github.com/Gyt-project/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/utils"
+	"github.com/Gyt-project/soft-serve/pkg/webhook"
 	"github.com/dustin/go-humanize"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"

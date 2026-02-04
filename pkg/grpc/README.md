@@ -22,7 +22,7 @@ export SOFT_SERVE_GRPC_LISTEN_ADDR="localhost:23234"
 ## Default Ports
 
 - **23231** - SSH server
-- **23232** - HTTP server  
+- **23232** - HTTP server
 - **23233** - Stats/Metrics server
 - **23234** - gRPC Management API (new)
 
@@ -44,7 +44,29 @@ The gRPC API provides comprehensive management capabilities:
 - `GetBlob` - Get file contents at a specific path
 - `GetBranches` - Get all branches for a repository
 - `ListCommits` - Get commit history with pagination (GitHub-style)
+- `GetCommit` - Get detailed commit information with diff/patch
 - `ListUserRepositories` - List all repositories owned by a specific user
+
+### Tags Management
+- `ListTags` - Get all tags with commit information
+- `GetTag` - Get detailed information about a specific tag
+- `CreateTag` - Create a new tag (Note: Currently returns unimplemented - use git push)
+- `DeleteTag` - Delete a tag (Note: Currently returns unimplemented - use git push)
+
+### Compare & Diff
+- `CompareBranches` - Compare two branches and get diff
+- `CompareCommits` - Compare two commits and get diff
+
+### Repository Information
+- `GetDefaultBranch` - Get the repository's default branch
+- `SetDefaultBranch` - Change the default branch
+- `GetCloneURLs` - Get SSH, HTTP, and Git clone URLs
+- `GetRepositoryStats` - Get repository statistics (size, commits, branches, tags, etc.)
+
+### Advanced Operations
+- `GetFileHistory` - Get commit history for a specific file path
+- `SearchCommits` - Search commits by message or author
+- `CheckPath` - Check if a file or directory exists at a reference
 
 ### User Management
 - `CreateUser` - Create a new user with optional admin rights
@@ -332,13 +354,145 @@ Response includes commit details and pagination info:
 - `ref`: Branch, tag, or commit SHA to start from (default: HEAD)
 - `hasMore`: Indicates if more commits are available
 
+### Example: Get Commit Details with Diff
+
+Get full commit information including file changes and patch:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "sha": "abc123def456"
+}' localhost:23234 softserve.GitServerManagement/GetCommit
+```
+
+Response includes commit info, file diffs, and patch:
+```json
+{
+  "commit": {
+    "sha": "abc123...",
+    "message": "Add new feature",
+    "author": {...},
+    "committer": {...}
+  },
+  "files": [
+    {
+      "path": "src/main.go",
+      "additions": 15,
+      "deletions": 3,
+      "status": "modified"
+    }
+  ],
+  "totalAdditions": 15,
+  "totalDeletions": 3,
+  "filesChanged": 1,
+  "patch": "diff --git a/src/main.go..."
+}
+```
+
+### Example: Tags Management
+
+List all tags:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo"
+}' localhost:23234 softserve.GitServerManagement/ListTags
+```
+
+Get tag details:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "tag_name": "v1.0.0"
+}' localhost:23234 softserve.GitServerManagement/GetTag
+```
+
+### Example: Compare Branches
+
+Compare two branches to see differences:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "base_branch": "main",
+  "head_branch": "develop"
+}' localhost:23234 softserve.GitServerManagement/CompareBranches
+```
+
+Compare specific commits:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "base_sha": "abc123",
+  "head_sha": "def456"
+}' localhost:23234 softserve.GitServerManagement/CompareCommits
+```
+
+### Example: Repository Information
+
+Get default branch:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo"
+}' localhost:23234 softserve.GitServerManagement/GetDefaultBranch
+```
+
+Set default branch:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "branch_name": "main"
+}' localhost:23234 softserve.GitServerManagement/SetDefaultBranch
+```
+
+Get clone URLs:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo"
+}' localhost:23234 softserve.GitServerManagement/GetCloneURLs
+```
+
+Get repository statistics:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo"
+}' localhost:23234 softserve.GitServerManagement/GetRepositoryStats
+```
+
+### Example: Advanced Operations
+
+Get file history (commits that modified a file):
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "path": "src/main.go",
+  "limit": 20
+}' localhost:23234 softserve.GitServerManagement/GetFileHistory
+```
+
+Search commits:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "query": "fix bug",
+  "author": "john",
+  "limit": 10
+}' localhost:23234 softserve.GitServerManagement/SearchCommits
+```
+
+Check if path exists:
+```bash
+grpcurl -plaintext -d '{
+  "repo_name": "my-repo",
+  "path": "README.md",
+  "ref": "main"
+}' localhost:23234 softserve.GitServerManagement/CheckPath
+```
+
 ## Access Levels
 
 When managing collaborators, use these access levels:
 
 - `NO_ACCESS` (1) - No access
 - `READ_ONLY` (2) - Read-only access
-- `READ_WRITE` (3) - Read and write access  
+- `READ_WRITE` (3) - Read and write access
 - `ADMIN_ACCESS` (4) - Full admin access
 
 ## Webhook Events
@@ -370,7 +524,7 @@ import (
     "context"
     "log"
 
-    pb "github.com/charmbracelet/soft-serve/pkg/grpc"
+    pb "github.com/Gyt-project/soft-serve/pkg/grpc"
     "google.golang.org/grpc"
     "google.golang.org/grpc/credentials/insecure"
 )
@@ -414,14 +568,14 @@ import service_pb2_grpc
 def main():
     with grpc.insecure_channel('localhost:23234') as channel:
         client = service_pb2_grpc.GitServerManagementStub(channel)
-        
+
         # Create a repository
         repo = client.CreateRepository(service_pb2.CreateRepositoryRequest(
             name='test-repo',
             description='Test repository',
             private=False
         ))
-        
+
         print(f'Created repository: {repo.name} (ID: {repo.id})')
 
 if __name__ == '__main__':

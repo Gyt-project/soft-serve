@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 
-	"github.com/charmbracelet/soft-serve/pkg/config"
+	"github.com/Gyt-project/soft-serve/pkg/config"
 	"github.com/go-jose/go-jose/v3"
 	"github.com/golang-jwt/jwt/v5"
 )

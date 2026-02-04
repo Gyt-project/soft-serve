@@ -2,18 +2,18 @@
 
 <p>
     <img style="width: 451px" src="https://stuff.charm.sh/soft-serve/soft-serve-header.png?0" alt="A nice rendering of some melting ice cream with the words ‘Charm Soft Serve’ next to it"><br>
-    <a href="https://github.com/charmbracelet/soft-serve/releases"><img src="https://img.shields.io/github/release/charmbracelet/soft-serve.svg" alt="Latest Release"></a>
-    <a href="https://pkg.go.dev/github.com/charmbracelet/soft-serve?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="GoDoc"></a>
-    <a href="https://github.com/charmbracelet/soft-serve/actions"><img src="https://github.com/charmbracelet/soft-serve/workflows/build/badge.svg" alt="Build Status"></a>
+    <a href="https://github.com/Gyt-project/soft-serve/releases"><img src="https://img.shields.io/github/release/charmbracelet/soft-serve.svg" alt="Latest Release"></a>
+    <a href="https://pkg.go.dev/github.com/Gyt-project/soft-serve?tab=doc"><img src="https://godoc.org/github.com/golang/gddo?status.svg" alt="GoDoc"></a>
+    <a href="https://github.com/Gyt-project/soft-serve/actions"><img src="https://github.com/Gyt-project/soft-serve/workflows/build/badge.svg" alt="Build Status"></a>
     <a href="https://nightly.link/charmbracelet/soft-serve/workflows/nightly/main"><img src="https://shields.io/badge/-Nightly%20Builds-orange?logo=hackthebox&logoColor=fff&style=appveyor"/></a>
 </p>
 
 A tasty, self-hostable Git server for the command line. 🍦
 
 <picture>
-  <source media="(max-width: 750px)" srcset="https://github.com/charmbracelet/soft-serve/assets/42545625/c754c746-dc4c-44a6-9c39-28649264cbf2">
-  <source media="(min-width: 750px)" width="750" srcset="https://github.com/charmbracelet/soft-serve/assets/42545625/c754c746-dc4c-44a6-9c39-28649264cbf2">
-  <img src="https://github.com/charmbracelet/soft-serve/assets/42545625/c754c746-dc4c-44a6-9c39-28649264cbf2" alt="Soft Serve screencast">
+  <source media="(max-width: 750px)" srcset="https://github.com/Gyt-project/soft-serve/assets/42545625/c754c746-dc4c-44a6-9c39-28649264cbf2">
+  <source media="(min-width: 750px)" width="750" srcset="https://github.com/Gyt-project/soft-serve/assets/42545625/c754c746-dc4c-44a6-9c39-28649264cbf2">
+  <img src="https://github.com/Gyt-project/soft-serve/assets/42545625/c754c746-dc4c-44a6-9c39-28649264cbf2" alt="Soft Serve screencast">
 </picture>
 
 - Easy to navigate TUI available over SSH
@@ -89,17 +89,17 @@ You can also download a binary from the [releases][releases] page. Packages are
 available in Alpine, Debian, and RPM formats. Binaries are available for Linux,
 macOS, and Windows.
 
-[releases]: https://github.com/charmbracelet/soft-serve/releases
+[releases]: https://github.com/Gyt-project/soft-serve/releases
 
 Or just install it with `go`:
 
 ```bash
-go install github.com/charmbracelet/soft-serve/cmd/soft@latest
+go install github.com/Gyt-project/soft-serve/cmd/soft@latest
 ```
 
 A [Docker image][docker] is also available.
 
-[docker]: https://github.com/charmbracelet/soft-serve/blob/main/docker.md
+[docker]: https://github.com/Gyt-project/soft-serve/blob/main/docker.md
 
 ## Setting up a server
 
@@ -131,7 +131,7 @@ Check out [Systemd][systemd] on how to run Soft Serve as a service using
 Systemd. Soft Serve packages in our Apt/Yum repositories come with Systemd
 service units.
 
-[systemd]: https://github.com/charmbracelet/soft-serve/blob/main/systemd.md
+[systemd]: https://github.com/Gyt-project/soft-serve/blob/main/systemd.md
 
 ### Server Configuration
 
@@ -571,7 +571,7 @@ git push charm main
 You can also *import* repositories from any public remote. Use the `repo import` command.
 
 ```sh
-ssh -p 23231 localhost repo import soft-serve https://github.com/charmbracelet/soft-serve
+ssh -p 23231 localhost repo import soft-serve https://github.com/Gyt-project/soft-serve
 ```
 
 Use `--mirror` or `-m` to mark the repository as a *pull* mirror.
@@ -808,7 +808,7 @@ If you’re curious about the inner workings of this problem have a look at:
 
 See [contributing][contribute].
 
-[contribute]: https://github.com/charmbracelet/soft-serve/contribute
+[contribute]: https://github.com/Gyt-project/soft-serve/contribute
 
 ## Feedback
 
@@ -820,7 +820,7 @@ We’d love to hear your thoughts on this project. Feel free to drop us a note!
 
 ## License
 
-[MIT](https://github.com/charmbracelet/soft-serve/raw/main/LICENSE)
+[MIT](https://github.com/Gyt-project/soft-serve/raw/main/LICENSE)
 
 ---
 

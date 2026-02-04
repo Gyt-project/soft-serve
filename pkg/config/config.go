@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/caarlos0/env/v11"
-	"github.com/charmbracelet/soft-serve/pkg/sshutils"
+	"github.com/Gyt-project/soft-serve/pkg/sshutils"
 	"golang.org/x/crypto/ssh"
 	"gopkg.in/yaml.v3"
 )

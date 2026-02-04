@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	pb "github.com/charmbracelet/soft-serve/pkg/grpc"
+	pb "github.com/Gyt-project/soft-serve/pkg/grpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

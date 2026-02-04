@@ -5,7 +5,7 @@ use Systemd to manage Soft Serve as a service on your host machine.
 
 Our Soft Serve deb/rpm packages come with Systemd service files pre-packaged.
 You can install `soft-serve` from our Apt/Yum repositories. Follow the
-[installation instructions](https://github.com/charmbracelet/soft-serve#installation) for
+[installation instructions](https://github.com/Gyt-project/soft-serve#installation) for
 more information.
 
 ## Writing a Systemd Service File
@@ -50,7 +50,7 @@ Now, let's write a new `/etc/systemd/system/soft-serve.service` Systemd service 
 ```conf
 [Unit]
 Description=Soft Serve git server 🍦
-Documentation=https://github.com/charmbracelet/soft-serve
+Documentation=https://github.com/Gyt-project/soft-serve
 Requires=network-online.target
 After=network-online.target
 

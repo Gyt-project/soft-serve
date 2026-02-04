@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	gansi "charm.land/glamour/v2/ansi"
+	"github.com/Gyt-project/soft-serve/pkg/ui/styles"
 	"github.com/alecthomas/chroma/v2/lexers"
-	"github.com/charmbracelet/soft-serve/pkg/ui/styles"
 )
 
 // FormatLineNumber adds line numbers to a string.

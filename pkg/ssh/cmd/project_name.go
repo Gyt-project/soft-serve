@@ -3,7 +3,7 @@ package cmd
 import (
 	"strings"
 
-	"github.com/charmbracelet/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/backend"
 	"github.com/spf13/cobra"
 )
 

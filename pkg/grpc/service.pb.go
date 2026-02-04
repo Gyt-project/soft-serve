@@ -3182,6 +3182,1523 @@ func (x *ListCommitsResponse) GetHasMore() bool {
 	return false
 }
 
+// Single Commit Detail with Diff
+type GetCommitRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	Sha           string                 `protobuf:"bytes,2,opt,name=sha,proto3" json:"sha,omitempty"` // Commit SHA
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCommitRequest) Reset() {
+	*x = GetCommitRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCommitRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCommitRequest) ProtoMessage() {}
+
+func (x *GetCommitRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCommitRequest.ProtoReflect.Descriptor instead.
+func (*GetCommitRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *GetCommitRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *GetCommitRequest) GetSha() string {
+	if x != nil {
+		return x.Sha
+	}
+	return ""
+}
+
+type FileDiff struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Path          string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	Additions     int32                  `protobuf:"varint,2,opt,name=additions,proto3" json:"additions,omitempty"`
+	Deletions     int32                  `protobuf:"varint,3,opt,name=deletions,proto3" json:"deletions,omitempty"`
+	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`                        // "added", "modified", "deleted", "renamed"
+	OldPath       *string                `protobuf:"bytes,5,opt,name=old_path,json=oldPath,proto3,oneof" json:"old_path,omitempty"` // For renamed files
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FileDiff) Reset() {
+	*x = FileDiff{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FileDiff) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FileDiff) ProtoMessage() {}
+
+func (x *FileDiff) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FileDiff.ProtoReflect.Descriptor instead.
+func (*FileDiff) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *FileDiff) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *FileDiff) GetAdditions() int32 {
+	if x != nil {
+		return x.Additions
+	}
+	return 0
+}
+
+func (x *FileDiff) GetDeletions() int32 {
+	if x != nil {
+		return x.Deletions
+	}
+	return 0
+}
+
+func (x *FileDiff) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *FileDiff) GetOldPath() string {
+	if x != nil && x.OldPath != nil {
+		return *x.OldPath
+	}
+	return ""
+}
+
+type CommitDetail struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Commit         *Commit                `protobuf:"bytes,1,opt,name=commit,proto3" json:"commit,omitempty"`
+	Files          []*FileDiff            `protobuf:"bytes,2,rep,name=files,proto3" json:"files,omitempty"`
+	TotalAdditions int32                  `protobuf:"varint,3,opt,name=total_additions,json=totalAdditions,proto3" json:"total_additions,omitempty"`
+	TotalDeletions int32                  `protobuf:"varint,4,opt,name=total_deletions,json=totalDeletions,proto3" json:"total_deletions,omitempty"`
+	FilesChanged   int32                  `protobuf:"varint,5,opt,name=files_changed,json=filesChanged,proto3" json:"files_changed,omitempty"`
+	Patch          string                 `protobuf:"bytes,6,opt,name=patch,proto3" json:"patch,omitempty"` // Full patch text
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CommitDetail) Reset() {
+	*x = CommitDetail{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CommitDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CommitDetail) ProtoMessage() {}
+
+func (x *CommitDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CommitDetail.ProtoReflect.Descriptor instead.
+func (*CommitDetail) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *CommitDetail) GetCommit() *Commit {
+	if x != nil {
+		return x.Commit
+	}
+	return nil
+}
+
+func (x *CommitDetail) GetFiles() []*FileDiff {
+	if x != nil {
+		return x.Files
+	}
+	return nil
+}
+
+func (x *CommitDetail) GetTotalAdditions() int32 {
+	if x != nil {
+		return x.TotalAdditions
+	}
+	return 0
+}
+
+func (x *CommitDetail) GetTotalDeletions() int32 {
+	if x != nil {
+		return x.TotalDeletions
+	}
+	return 0
+}
+
+func (x *CommitDetail) GetFilesChanged() int32 {
+	if x != nil {
+		return x.FilesChanged
+	}
+	return 0
+}
+
+func (x *CommitDetail) GetPatch() string {
+	if x != nil {
+		return x.Patch
+	}
+	return ""
+}
+
+// Tags Messages
+type Tag struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`                            // Tag name
+	FullName      string                 `protobuf:"bytes,2,opt,name=full_name,json=fullName,proto3" json:"full_name,omitempty"`    // Full reference (refs/tags/...)
+	CommitSha     string                 `protobuf:"bytes,3,opt,name=commit_sha,json=commitSha,proto3" json:"commit_sha,omitempty"` // Commit the tag points to
+	Message       *string                `protobuf:"bytes,4,opt,name=message,proto3,oneof" json:"message,omitempty"`                // Annotation message (for annotated tags)
+	Tagger        *Author                `protobuf:"bytes,5,opt,name=tagger,proto3,oneof" json:"tagger,omitempty"`                  // Tagger info (for annotated tags)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Tag) Reset() {
+	*x = Tag{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Tag) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Tag) ProtoMessage() {}
+
+func (x *Tag) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Tag.ProtoReflect.Descriptor instead.
+func (*Tag) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *Tag) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Tag) GetFullName() string {
+	if x != nil {
+		return x.FullName
+	}
+	return ""
+}
+
+func (x *Tag) GetCommitSha() string {
+	if x != nil {
+		return x.CommitSha
+	}
+	return ""
+}
+
+func (x *Tag) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
+	}
+	return ""
+}
+
+func (x *Tag) GetTagger() *Author {
+	if x != nil {
+		return x.Tagger
+	}
+	return nil
+}
+
+type ListTagsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTagsRequest) Reset() {
+	*x = ListTagsRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTagsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTagsRequest) ProtoMessage() {}
+
+func (x *ListTagsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTagsRequest.ProtoReflect.Descriptor instead.
+func (*ListTagsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *ListTagsRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+type ListTagsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tags          []*Tag                 `protobuf:"bytes,1,rep,name=tags,proto3" json:"tags,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTagsResponse) Reset() {
+	*x = ListTagsResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTagsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTagsResponse) ProtoMessage() {}
+
+func (x *ListTagsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTagsResponse.ProtoReflect.Descriptor instead.
+func (*ListTagsResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *ListTagsResponse) GetTags() []*Tag {
+	if x != nil {
+		return x.Tags
+	}
+	return nil
+}
+
+type GetTagRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	TagName       string                 `protobuf:"bytes,2,opt,name=tag_name,json=tagName,proto3" json:"tag_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTagRequest) Reset() {
+	*x = GetTagRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTagRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTagRequest) ProtoMessage() {}
+
+func (x *GetTagRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTagRequest.ProtoReflect.Descriptor instead.
+func (*GetTagRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{59}
+}
+
+func (x *GetTagRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *GetTagRequest) GetTagName() string {
+	if x != nil {
+		return x.TagName
+	}
+	return ""
+}
+
+type TagDetail struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tag           *Tag                   `protobuf:"bytes,1,opt,name=tag,proto3" json:"tag,omitempty"`
+	Commit        *Commit                `protobuf:"bytes,2,opt,name=commit,proto3" json:"commit,omitempty"` // The commit the tag points to
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TagDetail) Reset() {
+	*x = TagDetail{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TagDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TagDetail) ProtoMessage() {}
+
+func (x *TagDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TagDetail.ProtoReflect.Descriptor instead.
+func (*TagDetail) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *TagDetail) GetTag() *Tag {
+	if x != nil {
+		return x.Tag
+	}
+	return nil
+}
+
+func (x *TagDetail) GetCommit() *Commit {
+	if x != nil {
+		return x.Commit
+	}
+	return nil
+}
+
+type CreateTagRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	TagName       string                 `protobuf:"bytes,2,opt,name=tag_name,json=tagName,proto3" json:"tag_name,omitempty"`
+	Target        string                 `protobuf:"bytes,3,opt,name=target,proto3" json:"target,omitempty"`         // Branch/commit to tag
+	Message       *string                `protobuf:"bytes,4,opt,name=message,proto3,oneof" json:"message,omitempty"` // For annotated tags
+	TaggerName    *string                `protobuf:"bytes,5,opt,name=tagger_name,json=taggerName,proto3,oneof" json:"tagger_name,omitempty"`
+	TaggerEmail   *string                `protobuf:"bytes,6,opt,name=tagger_email,json=taggerEmail,proto3,oneof" json:"tagger_email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateTagRequest) Reset() {
+	*x = CreateTagRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateTagRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateTagRequest) ProtoMessage() {}
+
+func (x *CreateTagRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateTagRequest.ProtoReflect.Descriptor instead.
+func (*CreateTagRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *CreateTagRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *CreateTagRequest) GetTagName() string {
+	if x != nil {
+		return x.TagName
+	}
+	return ""
+}
+
+func (x *CreateTagRequest) GetTarget() string {
+	if x != nil {
+		return x.Target
+	}
+	return ""
+}
+
+func (x *CreateTagRequest) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
+	}
+	return ""
+}
+
+func (x *CreateTagRequest) GetTaggerName() string {
+	if x != nil && x.TaggerName != nil {
+		return *x.TaggerName
+	}
+	return ""
+}
+
+func (x *CreateTagRequest) GetTaggerEmail() string {
+	if x != nil && x.TaggerEmail != nil {
+		return *x.TaggerEmail
+	}
+	return ""
+}
+
+type DeleteTagRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	TagName       string                 `protobuf:"bytes,2,opt,name=tag_name,json=tagName,proto3" json:"tag_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTagRequest) Reset() {
+	*x = DeleteTagRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTagRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTagRequest) ProtoMessage() {}
+
+func (x *DeleteTagRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTagRequest.ProtoReflect.Descriptor instead.
+func (*DeleteTagRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *DeleteTagRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *DeleteTagRequest) GetTagName() string {
+	if x != nil {
+		return x.TagName
+	}
+	return ""
+}
+
+// Compare Messages
+type CompareBranchesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	BaseBranch    string                 `protobuf:"bytes,2,opt,name=base_branch,json=baseBranch,proto3" json:"base_branch,omitempty"`
+	HeadBranch    string                 `protobuf:"bytes,3,opt,name=head_branch,json=headBranch,proto3" json:"head_branch,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompareBranchesRequest) Reset() {
+	*x = CompareBranchesRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[63]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompareBranchesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompareBranchesRequest) ProtoMessage() {}
+
+func (x *CompareBranchesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[63]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompareBranchesRequest.ProtoReflect.Descriptor instead.
+func (*CompareBranchesRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{63}
+}
+
+func (x *CompareBranchesRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *CompareBranchesRequest) GetBaseBranch() string {
+	if x != nil {
+		return x.BaseBranch
+	}
+	return ""
+}
+
+func (x *CompareBranchesRequest) GetHeadBranch() string {
+	if x != nil {
+		return x.HeadBranch
+	}
+	return ""
+}
+
+type CompareCommitsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	BaseSha       string                 `protobuf:"bytes,2,opt,name=base_sha,json=baseSha,proto3" json:"base_sha,omitempty"`
+	HeadSha       string                 `protobuf:"bytes,3,opt,name=head_sha,json=headSha,proto3" json:"head_sha,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompareCommitsRequest) Reset() {
+	*x = CompareCommitsRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[64]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompareCommitsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompareCommitsRequest) ProtoMessage() {}
+
+func (x *CompareCommitsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[64]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompareCommitsRequest.ProtoReflect.Descriptor instead.
+func (*CompareCommitsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{64}
+}
+
+func (x *CompareCommitsRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *CompareCommitsRequest) GetBaseSha() string {
+	if x != nil {
+		return x.BaseSha
+	}
+	return ""
+}
+
+func (x *CompareCommitsRequest) GetHeadSha() string {
+	if x != nil {
+		return x.HeadSha
+	}
+	return ""
+}
+
+type CompareResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Commits        []*Commit              `protobuf:"bytes,1,rep,name=commits,proto3" json:"commits,omitempty"` // Commits in head not in base
+	Files          []*FileDiff            `protobuf:"bytes,2,rep,name=files,proto3" json:"files,omitempty"`
+	TotalAdditions int32                  `protobuf:"varint,3,opt,name=total_additions,json=totalAdditions,proto3" json:"total_additions,omitempty"`
+	TotalDeletions int32                  `protobuf:"varint,4,opt,name=total_deletions,json=totalDeletions,proto3" json:"total_deletions,omitempty"`
+	FilesChanged   int32                  `protobuf:"varint,5,opt,name=files_changed,json=filesChanged,proto3" json:"files_changed,omitempty"`
+	CommitsAhead   int32                  `protobuf:"varint,6,opt,name=commits_ahead,json=commitsAhead,proto3" json:"commits_ahead,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *CompareResponse) Reset() {
+	*x = CompareResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[65]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompareResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompareResponse) ProtoMessage() {}
+
+func (x *CompareResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[65]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompareResponse.ProtoReflect.Descriptor instead.
+func (*CompareResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{65}
+}
+
+func (x *CompareResponse) GetCommits() []*Commit {
+	if x != nil {
+		return x.Commits
+	}
+	return nil
+}
+
+func (x *CompareResponse) GetFiles() []*FileDiff {
+	if x != nil {
+		return x.Files
+	}
+	return nil
+}
+
+func (x *CompareResponse) GetTotalAdditions() int32 {
+	if x != nil {
+		return x.TotalAdditions
+	}
+	return 0
+}
+
+func (x *CompareResponse) GetTotalDeletions() int32 {
+	if x != nil {
+		return x.TotalDeletions
+	}
+	return 0
+}
+
+func (x *CompareResponse) GetFilesChanged() int32 {
+	if x != nil {
+		return x.FilesChanged
+	}
+	return 0
+}
+
+func (x *CompareResponse) GetCommitsAhead() int32 {
+	if x != nil {
+		return x.CommitsAhead
+	}
+	return 0
+}
+
+// Default Branch Messages
+type GetDefaultBranchRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDefaultBranchRequest) Reset() {
+	*x = GetDefaultBranchRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[66]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDefaultBranchRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDefaultBranchRequest) ProtoMessage() {}
+
+func (x *GetDefaultBranchRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[66]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDefaultBranchRequest.ProtoReflect.Descriptor instead.
+func (*GetDefaultBranchRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{66}
+}
+
+func (x *GetDefaultBranchRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+type SetDefaultBranchRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	BranchName    string                 `protobuf:"bytes,2,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetDefaultBranchRequest) Reset() {
+	*x = SetDefaultBranchRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[67]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetDefaultBranchRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetDefaultBranchRequest) ProtoMessage() {}
+
+func (x *SetDefaultBranchRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[67]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetDefaultBranchRequest.ProtoReflect.Descriptor instead.
+func (*SetDefaultBranchRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{67}
+}
+
+func (x *SetDefaultBranchRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *SetDefaultBranchRequest) GetBranchName() string {
+	if x != nil {
+		return x.BranchName
+	}
+	return ""
+}
+
+type DefaultBranchResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BranchName    string                 `protobuf:"bytes,1,opt,name=branch_name,json=branchName,proto3" json:"branch_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DefaultBranchResponse) Reset() {
+	*x = DefaultBranchResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[68]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DefaultBranchResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DefaultBranchResponse) ProtoMessage() {}
+
+func (x *DefaultBranchResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[68]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DefaultBranchResponse.ProtoReflect.Descriptor instead.
+func (*DefaultBranchResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{68}
+}
+
+func (x *DefaultBranchResponse) GetBranchName() string {
+	if x != nil {
+		return x.BranchName
+	}
+	return ""
+}
+
+// Clone URLs
+type GetCloneURLsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCloneURLsRequest) Reset() {
+	*x = GetCloneURLsRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[69]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCloneURLsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCloneURLsRequest) ProtoMessage() {}
+
+func (x *GetCloneURLsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[69]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCloneURLsRequest.ProtoReflect.Descriptor instead.
+func (*GetCloneURLsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{69}
+}
+
+func (x *GetCloneURLsRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+type CloneURLsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SshUrl        string                 `protobuf:"bytes,1,opt,name=ssh_url,json=sshUrl,proto3" json:"ssh_url,omitempty"`
+	HttpUrl       string                 `protobuf:"bytes,2,opt,name=http_url,json=httpUrl,proto3" json:"http_url,omitempty"`
+	GitUrl        string                 `protobuf:"bytes,3,opt,name=git_url,json=gitUrl,proto3" json:"git_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CloneURLsResponse) Reset() {
+	*x = CloneURLsResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[70]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CloneURLsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CloneURLsResponse) ProtoMessage() {}
+
+func (x *CloneURLsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[70]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CloneURLsResponse.ProtoReflect.Descriptor instead.
+func (*CloneURLsResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{70}
+}
+
+func (x *CloneURLsResponse) GetSshUrl() string {
+	if x != nil {
+		return x.SshUrl
+	}
+	return ""
+}
+
+func (x *CloneURLsResponse) GetHttpUrl() string {
+	if x != nil {
+		return x.HttpUrl
+	}
+	return ""
+}
+
+func (x *CloneURLsResponse) GetGitUrl() string {
+	if x != nil {
+		return x.GitUrl
+	}
+	return ""
+}
+
+// Repository Stats
+type GetRepositoryStatsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRepositoryStatsRequest) Reset() {
+	*x = GetRepositoryStatsRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[71]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRepositoryStatsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRepositoryStatsRequest) ProtoMessage() {}
+
+func (x *GetRepositoryStatsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[71]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRepositoryStatsRequest.ProtoReflect.Descriptor instead.
+func (*GetRepositoryStatsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{71}
+}
+
+func (x *GetRepositoryStatsRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+type RepositoryStatsResponse struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	SizeBytes        int64                  `protobuf:"varint,1,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	CommitCount      int64                  `protobuf:"varint,2,opt,name=commit_count,json=commitCount,proto3" json:"commit_count,omitempty"`
+	BranchCount      int32                  `protobuf:"varint,3,opt,name=branch_count,json=branchCount,proto3" json:"branch_count,omitempty"`
+	TagCount         int32                  `protobuf:"varint,4,opt,name=tag_count,json=tagCount,proto3" json:"tag_count,omitempty"`
+	ContributorCount int32                  `protobuf:"varint,5,opt,name=contributor_count,json=contributorCount,proto3" json:"contributor_count,omitempty"`
+	LastCommit       *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_commit,json=lastCommit,proto3" json:"last_commit,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *RepositoryStatsResponse) Reset() {
+	*x = RepositoryStatsResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[72]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RepositoryStatsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RepositoryStatsResponse) ProtoMessage() {}
+
+func (x *RepositoryStatsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[72]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RepositoryStatsResponse.ProtoReflect.Descriptor instead.
+func (*RepositoryStatsResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{72}
+}
+
+func (x *RepositoryStatsResponse) GetSizeBytes() int64 {
+	if x != nil {
+		return x.SizeBytes
+	}
+	return 0
+}
+
+func (x *RepositoryStatsResponse) GetCommitCount() int64 {
+	if x != nil {
+		return x.CommitCount
+	}
+	return 0
+}
+
+func (x *RepositoryStatsResponse) GetBranchCount() int32 {
+	if x != nil {
+		return x.BranchCount
+	}
+	return 0
+}
+
+func (x *RepositoryStatsResponse) GetTagCount() int32 {
+	if x != nil {
+		return x.TagCount
+	}
+	return 0
+}
+
+func (x *RepositoryStatsResponse) GetContributorCount() int32 {
+	if x != nil {
+		return x.ContributorCount
+	}
+	return 0
+}
+
+func (x *RepositoryStatsResponse) GetLastCommit() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastCommit
+	}
+	return nil
+}
+
+// File History
+type GetFileHistoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	Path          string                 `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
+	Ref           *string                `protobuf:"bytes,3,opt,name=ref,proto3,oneof" json:"ref,omitempty"`      // Branch/tag to search (default: HEAD)
+	Limit         *int32                 `protobuf:"varint,4,opt,name=limit,proto3,oneof" json:"limit,omitempty"` // Max commits to return (default: 50)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFileHistoryRequest) Reset() {
+	*x = GetFileHistoryRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[73]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFileHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFileHistoryRequest) ProtoMessage() {}
+
+func (x *GetFileHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[73]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFileHistoryRequest.ProtoReflect.Descriptor instead.
+func (*GetFileHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{73}
+}
+
+func (x *GetFileHistoryRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *GetFileHistoryRequest) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *GetFileHistoryRequest) GetRef() string {
+	if x != nil && x.Ref != nil {
+		return *x.Ref
+	}
+	return ""
+}
+
+func (x *GetFileHistoryRequest) GetLimit() int32 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+type GetFileHistoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Commits       []*Commit              `protobuf:"bytes,1,rep,name=commits,proto3" json:"commits,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetFileHistoryResponse) Reset() {
+	*x = GetFileHistoryResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[74]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetFileHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetFileHistoryResponse) ProtoMessage() {}
+
+func (x *GetFileHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[74]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetFileHistoryResponse.ProtoReflect.Descriptor instead.
+func (*GetFileHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{74}
+}
+
+func (x *GetFileHistoryResponse) GetCommits() []*Commit {
+	if x != nil {
+		return x.Commits
+	}
+	return nil
+}
+
+// Search Commits
+type SearchCommitsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	Query         string                 `protobuf:"bytes,2,opt,name=query,proto3" json:"query,omitempty"`         // Search in commit message
+	Author        *string                `protobuf:"bytes,3,opt,name=author,proto3,oneof" json:"author,omitempty"` // Filter by author
+	Ref           *string                `protobuf:"bytes,4,opt,name=ref,proto3,oneof" json:"ref,omitempty"`       // Branch/tag to search (default: HEAD)
+	Limit         *int32                 `protobuf:"varint,5,opt,name=limit,proto3,oneof" json:"limit,omitempty"`  // Max results (default: 30, max: 100)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchCommitsRequest) Reset() {
+	*x = SearchCommitsRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[75]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchCommitsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchCommitsRequest) ProtoMessage() {}
+
+func (x *SearchCommitsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[75]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchCommitsRequest.ProtoReflect.Descriptor instead.
+func (*SearchCommitsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{75}
+}
+
+func (x *SearchCommitsRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *SearchCommitsRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *SearchCommitsRequest) GetAuthor() string {
+	if x != nil && x.Author != nil {
+		return *x.Author
+	}
+	return ""
+}
+
+func (x *SearchCommitsRequest) GetRef() string {
+	if x != nil && x.Ref != nil {
+		return *x.Ref
+	}
+	return ""
+}
+
+func (x *SearchCommitsRequest) GetLimit() int32 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+// Check Path
+type CheckPathRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RepoName      string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`
+	Path          string                 `protobuf:"bytes,2,opt,name=path,proto3" json:"path,omitempty"`
+	Ref           *string                `protobuf:"bytes,3,opt,name=ref,proto3,oneof" json:"ref,omitempty"` // Branch/tag/commit (default: HEAD)
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckPathRequest) Reset() {
+	*x = CheckPathRequest{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[76]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckPathRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckPathRequest) ProtoMessage() {}
+
+func (x *CheckPathRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[76]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckPathRequest.ProtoReflect.Descriptor instead.
+func (*CheckPathRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{76}
+}
+
+func (x *CheckPathRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *CheckPathRequest) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *CheckPathRequest) GetRef() string {
+	if x != nil && x.Ref != nil {
+		return *x.Ref
+	}
+	return ""
+}
+
+type CheckPathResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Exists        bool                   `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"`
+	IsDir         bool                   `protobuf:"varint,2,opt,name=is_dir,json=isDir,proto3" json:"is_dir,omitempty"`
+	IsFile        bool                   `protobuf:"varint,3,opt,name=is_file,json=isFile,proto3" json:"is_file,omitempty"`
+	Size          *int64                 `protobuf:"varint,4,opt,name=size,proto3,oneof" json:"size,omitempty"` // File size if it's a file
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckPathResponse) Reset() {
+	*x = CheckPathResponse{}
+	mi := &file_pkg_grpc_service_proto_msgTypes[77]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckPathResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckPathResponse) ProtoMessage() {}
+
+func (x *CheckPathResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_grpc_service_proto_msgTypes[77]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckPathResponse.ProtoReflect.Descriptor instead.
+func (*CheckPathResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_grpc_service_proto_rawDescGZIP(), []int{77}
+}
+
+func (x *CheckPathResponse) GetExists() bool {
+	if x != nil {
+		return x.Exists
+	}
+	return false
+}
+
+func (x *CheckPathResponse) GetIsDir() bool {
+	if x != nil {
+		return x.IsDir
+	}
+	return false
+}
+
+func (x *CheckPathResponse) GetIsFile() bool {
+	if x != nil {
+		return x.IsFile
+	}
+	return false
+}
+
+func (x *CheckPathResponse) GetSize() int64 {
+	if x != nil && x.Size != nil {
+		return *x.Size
+	}
+	return 0
+}
+
 var File_pkg_grpc_service_proto protoreflect.FileDescriptor
 
 const file_pkg_grpc_service_proto_rawDesc = "" +
@@ -3434,14 +4951,138 @@ const file_pkg_grpc_service_proto_rawDesc = "" +
 	"\acommits\x18\x01 \x03(\v2\x11.softserve.CommitR\acommits\x12\x12\n" +
 	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x19\n" +
 	"\bper_page\x18\x03 \x01(\x05R\aperPage\x12\x19\n" +
-	"\bhas_more\x18\x04 \x01(\bR\ahasMore*k\n" +
+	"\bhas_more\x18\x04 \x01(\bR\ahasMore\"A\n" +
+	"\x10GetCommitRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x10\n" +
+	"\x03sha\x18\x02 \x01(\tR\x03sha\"\x9f\x01\n" +
+	"\bFileDiff\x12\x12\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path\x12\x1c\n" +
+	"\tadditions\x18\x02 \x01(\x05R\tadditions\x12\x1c\n" +
+	"\tdeletions\x18\x03 \x01(\x05R\tdeletions\x12\x16\n" +
+	"\x06status\x18\x04 \x01(\tR\x06status\x12\x1e\n" +
+	"\bold_path\x18\x05 \x01(\tH\x00R\aoldPath\x88\x01\x01B\v\n" +
+	"\t_old_path\"\xf1\x01\n" +
+	"\fCommitDetail\x12)\n" +
+	"\x06commit\x18\x01 \x01(\v2\x11.softserve.CommitR\x06commit\x12)\n" +
+	"\x05files\x18\x02 \x03(\v2\x13.softserve.FileDiffR\x05files\x12'\n" +
+	"\x0ftotal_additions\x18\x03 \x01(\x05R\x0etotalAdditions\x12'\n" +
+	"\x0ftotal_deletions\x18\x04 \x01(\x05R\x0etotalDeletions\x12#\n" +
+	"\rfiles_changed\x18\x05 \x01(\x05R\ffilesChanged\x12\x14\n" +
+	"\x05patch\x18\x06 \x01(\tR\x05patch\"\xbb\x01\n" +
+	"\x03Tag\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1b\n" +
+	"\tfull_name\x18\x02 \x01(\tR\bfullName\x12\x1d\n" +
+	"\n" +
+	"commit_sha\x18\x03 \x01(\tR\tcommitSha\x12\x1d\n" +
+	"\amessage\x18\x04 \x01(\tH\x00R\amessage\x88\x01\x01\x12.\n" +
+	"\x06tagger\x18\x05 \x01(\v2\x11.softserve.AuthorH\x01R\x06tagger\x88\x01\x01B\n" +
+	"\n" +
+	"\b_messageB\t\n" +
+	"\a_tagger\".\n" +
+	"\x0fListTagsRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\"6\n" +
+	"\x10ListTagsResponse\x12\"\n" +
+	"\x04tags\x18\x01 \x03(\v2\x0e.softserve.TagR\x04tags\"G\n" +
+	"\rGetTagRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x19\n" +
+	"\btag_name\x18\x02 \x01(\tR\atagName\"X\n" +
+	"\tTagDetail\x12 \n" +
+	"\x03tag\x18\x01 \x01(\v2\x0e.softserve.TagR\x03tag\x12)\n" +
+	"\x06commit\x18\x02 \x01(\v2\x11.softserve.CommitR\x06commit\"\xfc\x01\n" +
+	"\x10CreateTagRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x19\n" +
+	"\btag_name\x18\x02 \x01(\tR\atagName\x12\x16\n" +
+	"\x06target\x18\x03 \x01(\tR\x06target\x12\x1d\n" +
+	"\amessage\x18\x04 \x01(\tH\x00R\amessage\x88\x01\x01\x12$\n" +
+	"\vtagger_name\x18\x05 \x01(\tH\x01R\n" +
+	"taggerName\x88\x01\x01\x12&\n" +
+	"\ftagger_email\x18\x06 \x01(\tH\x02R\vtaggerEmail\x88\x01\x01B\n" +
+	"\n" +
+	"\b_messageB\x0e\n" +
+	"\f_tagger_nameB\x0f\n" +
+	"\r_tagger_email\"J\n" +
+	"\x10DeleteTagRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x19\n" +
+	"\btag_name\x18\x02 \x01(\tR\atagName\"w\n" +
+	"\x16CompareBranchesRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x1f\n" +
+	"\vbase_branch\x18\x02 \x01(\tR\n" +
+	"baseBranch\x12\x1f\n" +
+	"\vhead_branch\x18\x03 \x01(\tR\n" +
+	"headBranch\"j\n" +
+	"\x15CompareCommitsRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x19\n" +
+	"\bbase_sha\x18\x02 \x01(\tR\abaseSha\x12\x19\n" +
+	"\bhead_sha\x18\x03 \x01(\tR\aheadSha\"\x85\x02\n" +
+	"\x0fCompareResponse\x12+\n" +
+	"\acommits\x18\x01 \x03(\v2\x11.softserve.CommitR\acommits\x12)\n" +
+	"\x05files\x18\x02 \x03(\v2\x13.softserve.FileDiffR\x05files\x12'\n" +
+	"\x0ftotal_additions\x18\x03 \x01(\x05R\x0etotalAdditions\x12'\n" +
+	"\x0ftotal_deletions\x18\x04 \x01(\x05R\x0etotalDeletions\x12#\n" +
+	"\rfiles_changed\x18\x05 \x01(\x05R\ffilesChanged\x12#\n" +
+	"\rcommits_ahead\x18\x06 \x01(\x05R\fcommitsAhead\"6\n" +
+	"\x17GetDefaultBranchRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\"W\n" +
+	"\x17SetDefaultBranchRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x1f\n" +
+	"\vbranch_name\x18\x02 \x01(\tR\n" +
+	"branchName\"8\n" +
+	"\x15DefaultBranchResponse\x12\x1f\n" +
+	"\vbranch_name\x18\x01 \x01(\tR\n" +
+	"branchName\"2\n" +
+	"\x13GetCloneURLsRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\"`\n" +
+	"\x11CloneURLsResponse\x12\x17\n" +
+	"\assh_url\x18\x01 \x01(\tR\x06sshUrl\x12\x19\n" +
+	"\bhttp_url\x18\x02 \x01(\tR\ahttpUrl\x12\x17\n" +
+	"\agit_url\x18\x03 \x01(\tR\x06gitUrl\"8\n" +
+	"\x19GetRepositoryStatsRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\"\x85\x02\n" +
+	"\x17RepositoryStatsResponse\x12\x1d\n" +
+	"\n" +
+	"size_bytes\x18\x01 \x01(\x03R\tsizeBytes\x12!\n" +
+	"\fcommit_count\x18\x02 \x01(\x03R\vcommitCount\x12!\n" +
+	"\fbranch_count\x18\x03 \x01(\x05R\vbranchCount\x12\x1b\n" +
+	"\ttag_count\x18\x04 \x01(\x05R\btagCount\x12+\n" +
+	"\x11contributor_count\x18\x05 \x01(\x05R\x10contributorCount\x12;\n" +
+	"\vlast_commit\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"lastCommit\"\x8c\x01\n" +
+	"\x15GetFileHistoryRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x12\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\x12\x15\n" +
+	"\x03ref\x18\x03 \x01(\tH\x00R\x03ref\x88\x01\x01\x12\x19\n" +
+	"\x05limit\x18\x04 \x01(\x05H\x01R\x05limit\x88\x01\x01B\x06\n" +
+	"\x04_refB\b\n" +
+	"\x06_limit\"E\n" +
+	"\x16GetFileHistoryResponse\x12+\n" +
+	"\acommits\x18\x01 \x03(\v2\x11.softserve.CommitR\acommits\"\xb5\x01\n" +
+	"\x14SearchCommitsRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x14\n" +
+	"\x05query\x18\x02 \x01(\tR\x05query\x12\x1b\n" +
+	"\x06author\x18\x03 \x01(\tH\x00R\x06author\x88\x01\x01\x12\x15\n" +
+	"\x03ref\x18\x04 \x01(\tH\x01R\x03ref\x88\x01\x01\x12\x19\n" +
+	"\x05limit\x18\x05 \x01(\x05H\x02R\x05limit\x88\x01\x01B\t\n" +
+	"\a_authorB\x06\n" +
+	"\x04_refB\b\n" +
+	"\x06_limit\"b\n" +
+	"\x10CheckPathRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x12\n" +
+	"\x04path\x18\x02 \x01(\tR\x04path\x12\x15\n" +
+	"\x03ref\x18\x03 \x01(\tH\x00R\x03ref\x88\x01\x01B\x06\n" +
+	"\x04_ref\"}\n" +
+	"\x11CheckPathResponse\x12\x16\n" +
+	"\x06exists\x18\x01 \x01(\bR\x06exists\x12\x15\n" +
+	"\x06is_dir\x18\x02 \x01(\bR\x05isDir\x12\x17\n" +
+	"\ais_file\x18\x03 \x01(\bR\x06isFile\x12\x17\n" +
+	"\x04size\x18\x04 \x01(\x03H\x00R\x04size\x88\x01\x01B\a\n" +
+	"\x05_size*k\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\r\n" +
 	"\tNO_ACCESS\x10\x01\x12\r\n" +
 	"\tREAD_ONLY\x10\x02\x12\x0e\n" +
 	"\n" +
 	"READ_WRITE\x10\x03\x12\x10\n" +
-	"\fADMIN_ACCESS\x10\x042\xb8\x14\n" +
+	"\fADMIN_ACCESS\x10\x042\xf1\x1c\n" +
 	"\x13GitServerManagement\x12M\n" +
 	"\x10CreateRepository\x12\".softserve.CreateRepositoryRequest\x1a\x15.softserve.Repository\x12N\n" +
 	"\x10DeleteRepository\x12\".softserve.DeleteRepositoryRequest\x1a\x16.google.protobuf.Empty\x12G\n" +
@@ -3453,8 +5094,22 @@ const file_pkg_grpc_service_proto_rawDesc = "" +
 	"\aGetTree\x12\x19.softserve.GetTreeRequest\x1a\x1a.softserve.GetTreeResponse\x12@\n" +
 	"\aGetBlob\x12\x19.softserve.GetBlobRequest\x1a\x1a.softserve.GetBlobResponse\x12L\n" +
 	"\vGetBranches\x12\x1d.softserve.GetBranchesRequest\x1a\x1e.softserve.GetBranchesResponse\x12L\n" +
-	"\vListCommits\x12\x1d.softserve.ListCommitsRequest\x1a\x1e.softserve.ListCommitsResponse\x12c\n" +
-	"\x14ListUserRepositories\x12&.softserve.ListUserRepositoriesRequest\x1a#.softserve.ListRepositoriesResponse\x12;\n" +
+	"\vListCommits\x12\x1d.softserve.ListCommitsRequest\x1a\x1e.softserve.ListCommitsResponse\x12A\n" +
+	"\tGetCommit\x12\x1b.softserve.GetCommitRequest\x1a\x17.softserve.CommitDetail\x12c\n" +
+	"\x14ListUserRepositories\x12&.softserve.ListUserRepositoriesRequest\x1a#.softserve.ListRepositoriesResponse\x12C\n" +
+	"\bListTags\x12\x1a.softserve.ListTagsRequest\x1a\x1b.softserve.ListTagsResponse\x128\n" +
+	"\x06GetTag\x12\x18.softserve.GetTagRequest\x1a\x14.softserve.TagDetail\x12>\n" +
+	"\tCreateTag\x12\x1b.softserve.CreateTagRequest\x1a\x14.softserve.TagDetail\x12@\n" +
+	"\tDeleteTag\x12\x1b.softserve.DeleteTagRequest\x1a\x16.google.protobuf.Empty\x12P\n" +
+	"\x0fCompareBranches\x12!.softserve.CompareBranchesRequest\x1a\x1a.softserve.CompareResponse\x12N\n" +
+	"\x0eCompareCommits\x12 .softserve.CompareCommitsRequest\x1a\x1a.softserve.CompareResponse\x12X\n" +
+	"\x10GetDefaultBranch\x12\".softserve.GetDefaultBranchRequest\x1a .softserve.DefaultBranchResponse\x12X\n" +
+	"\x10SetDefaultBranch\x12\".softserve.SetDefaultBranchRequest\x1a .softserve.DefaultBranchResponse\x12L\n" +
+	"\fGetCloneURLs\x12\x1e.softserve.GetCloneURLsRequest\x1a\x1c.softserve.CloneURLsResponse\x12^\n" +
+	"\x12GetRepositoryStats\x12$.softserve.GetRepositoryStatsRequest\x1a\".softserve.RepositoryStatsResponse\x12U\n" +
+	"\x0eGetFileHistory\x12 .softserve.GetFileHistoryRequest\x1a!.softserve.GetFileHistoryResponse\x12P\n" +
+	"\rSearchCommits\x12\x1f.softserve.SearchCommitsRequest\x1a\x1e.softserve.ListCommitsResponse\x12F\n" +
+	"\tCheckPath\x12\x1b.softserve.CheckPathRequest\x1a\x1c.softserve.CheckPathResponse\x12;\n" +
 	"\n" +
 	"CreateUser\x12\x1c.softserve.CreateUserRequest\x1a\x0f.softserve.User\x12B\n" +
 	"\n" +
@@ -3480,7 +5135,7 @@ const file_pkg_grpc_service_proto_rawDesc = "" +
 	"\rUpdateWebhook\x12\x1f.softserve.UpdateWebhookRequest\x1a\x12.softserve.Webhook\x12@\n" +
 	"\vGetSettings\x12\x16.google.protobuf.Empty\x1a\x19.softserve.ServerSettings\x12M\n" +
 	"\x0eUpdateSettings\x12 .softserve.UpdateSettingsRequest\x1a\x19.softserve.ServerSettings\x12E\n" +
-	"\vHealthCheck\x12\x16.google.protobuf.Empty\x1a\x1e.softserve.HealthCheckResponseB3Z1github.com/charmbracelet/soft-serve/pkg/grpc;grpcb\x06proto3"
+	"\vHealthCheck\x12\x16.google.protobuf.Empty\x1a\x1e.softserve.HealthCheckResponseB3Z1github.com/Gyt-project/soft-serve/pkg/grpc;grpcb\x06proto3"
 
 var (
 	file_pkg_grpc_service_proto_rawDescOnce sync.Once
@@ -3495,7 +5150,7 @@ func file_pkg_grpc_service_proto_rawDescGZIP() []byte {
 }
 
 var file_pkg_grpc_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pkg_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 53)
+var file_pkg_grpc_service_proto_msgTypes = make([]protoimpl.MessageInfo, 78)
 var file_pkg_grpc_service_proto_goTypes = []any{
 	(AccessLevel)(0),                    // 0: softserve.AccessLevel
 	(*Repository)(nil),                  // 1: softserve.Repository
@@ -3551,105 +5206,168 @@ var file_pkg_grpc_service_proto_goTypes = []any{
 	(*Commit)(nil),                      // 51: softserve.Commit
 	(*ListCommitsRequest)(nil),          // 52: softserve.ListCommitsRequest
 	(*ListCommitsResponse)(nil),         // 53: softserve.ListCommitsResponse
-	(*timestamppb.Timestamp)(nil),       // 54: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),               // 55: google.protobuf.Empty
+	(*GetCommitRequest)(nil),            // 54: softserve.GetCommitRequest
+	(*FileDiff)(nil),                    // 55: softserve.FileDiff
+	(*CommitDetail)(nil),                // 56: softserve.CommitDetail
+	(*Tag)(nil),                         // 57: softserve.Tag
+	(*ListTagsRequest)(nil),             // 58: softserve.ListTagsRequest
+	(*ListTagsResponse)(nil),            // 59: softserve.ListTagsResponse
+	(*GetTagRequest)(nil),               // 60: softserve.GetTagRequest
+	(*TagDetail)(nil),                   // 61: softserve.TagDetail
+	(*CreateTagRequest)(nil),            // 62: softserve.CreateTagRequest
+	(*DeleteTagRequest)(nil),            // 63: softserve.DeleteTagRequest
+	(*CompareBranchesRequest)(nil),      // 64: softserve.CompareBranchesRequest
+	(*CompareCommitsRequest)(nil),       // 65: softserve.CompareCommitsRequest
+	(*CompareResponse)(nil),             // 66: softserve.CompareResponse
+	(*GetDefaultBranchRequest)(nil),     // 67: softserve.GetDefaultBranchRequest
+	(*SetDefaultBranchRequest)(nil),     // 68: softserve.SetDefaultBranchRequest
+	(*DefaultBranchResponse)(nil),       // 69: softserve.DefaultBranchResponse
+	(*GetCloneURLsRequest)(nil),         // 70: softserve.GetCloneURLsRequest
+	(*CloneURLsResponse)(nil),           // 71: softserve.CloneURLsResponse
+	(*GetRepositoryStatsRequest)(nil),   // 72: softserve.GetRepositoryStatsRequest
+	(*RepositoryStatsResponse)(nil),     // 73: softserve.RepositoryStatsResponse
+	(*GetFileHistoryRequest)(nil),       // 74: softserve.GetFileHistoryRequest
+	(*GetFileHistoryResponse)(nil),      // 75: softserve.GetFileHistoryResponse
+	(*SearchCommitsRequest)(nil),        // 76: softserve.SearchCommitsRequest
+	(*CheckPathRequest)(nil),            // 77: softserve.CheckPathRequest
+	(*CheckPathResponse)(nil),           // 78: softserve.CheckPathResponse
+	(*timestamppb.Timestamp)(nil),       // 79: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),               // 80: google.protobuf.Empty
 }
 var file_pkg_grpc_service_proto_depIdxs = []int32{
-	54, // 0: softserve.Repository.created_at:type_name -> google.protobuf.Timestamp
-	54, // 1: softserve.Repository.updated_at:type_name -> google.protobuf.Timestamp
+	79, // 0: softserve.Repository.created_at:type_name -> google.protobuf.Timestamp
+	79, // 1: softserve.Repository.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: softserve.ListRepositoriesResponse.repositories:type_name -> softserve.Repository
 	10, // 3: softserve.ListUsersResponse.users:type_name -> softserve.User
 	0,  // 4: softserve.Collaborator.access_level:type_name -> softserve.AccessLevel
 	0,  // 5: softserve.AddCollaboratorRequest.access_level:type_name -> softserve.AccessLevel
 	21, // 6: softserve.ListCollaboratorsResponse.collaborators:type_name -> softserve.Collaborator
-	54, // 7: softserve.AccessToken.created_at:type_name -> google.protobuf.Timestamp
-	54, // 8: softserve.AccessToken.expires_at:type_name -> google.protobuf.Timestamp
-	54, // 9: softserve.CreateAccessTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	79, // 7: softserve.AccessToken.created_at:type_name -> google.protobuf.Timestamp
+	79, // 8: softserve.AccessToken.expires_at:type_name -> google.protobuf.Timestamp
+	79, // 9: softserve.CreateAccessTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
 	26, // 10: softserve.ListAccessTokensResponse.tokens:type_name -> softserve.AccessToken
-	54, // 11: softserve.Webhook.created_at:type_name -> google.protobuf.Timestamp
-	54, // 12: softserve.Webhook.updated_at:type_name -> google.protobuf.Timestamp
+	79, // 11: softserve.Webhook.created_at:type_name -> google.protobuf.Timestamp
+	79, // 12: softserve.Webhook.updated_at:type_name -> google.protobuf.Timestamp
 	31, // 13: softserve.ListWebhooksResponse.webhooks:type_name -> softserve.Webhook
 	0,  // 14: softserve.ServerSettings.anon_access:type_name -> softserve.AccessLevel
 	0,  // 15: softserve.UpdateSettingsRequest.anon_access:type_name -> softserve.AccessLevel
 	42, // 16: softserve.GetTreeResponse.entries:type_name -> softserve.TreeEntry
 	46, // 17: softserve.GetBranchesResponse.branches:type_name -> softserve.Branch
-	54, // 18: softserve.Author.when:type_name -> google.protobuf.Timestamp
+	79, // 18: softserve.Author.when:type_name -> google.protobuf.Timestamp
 	50, // 19: softserve.Commit.author:type_name -> softserve.Author
 	50, // 20: softserve.Commit.committer:type_name -> softserve.Author
 	51, // 21: softserve.ListCommitsResponse.commits:type_name -> softserve.Commit
-	2,  // 22: softserve.GitServerManagement.CreateRepository:input_type -> softserve.CreateRepositoryRequest
-	3,  // 23: softserve.GitServerManagement.DeleteRepository:input_type -> softserve.DeleteRepositoryRequest
-	4,  // 24: softserve.GitServerManagement.GetRepository:input_type -> softserve.GetRepositoryRequest
-	5,  // 25: softserve.GitServerManagement.ListRepositories:input_type -> softserve.ListRepositoriesRequest
-	7,  // 26: softserve.GitServerManagement.RenameRepository:input_type -> softserve.RenameRepositoryRequest
-	8,  // 27: softserve.GitServerManagement.UpdateRepository:input_type -> softserve.UpdateRepositoryRequest
-	9,  // 28: softserve.GitServerManagement.ImportRepository:input_type -> softserve.ImportRepositoryRequest
-	41, // 29: softserve.GitServerManagement.GetTree:input_type -> softserve.GetTreeRequest
-	44, // 30: softserve.GitServerManagement.GetBlob:input_type -> softserve.GetBlobRequest
-	47, // 31: softserve.GitServerManagement.GetBranches:input_type -> softserve.GetBranchesRequest
-	52, // 32: softserve.GitServerManagement.ListCommits:input_type -> softserve.ListCommitsRequest
-	49, // 33: softserve.GitServerManagement.ListUserRepositories:input_type -> softserve.ListUserRepositoriesRequest
-	11, // 34: softserve.GitServerManagement.CreateUser:input_type -> softserve.CreateUserRequest
-	12, // 35: softserve.GitServerManagement.DeleteUser:input_type -> softserve.DeleteUserRequest
-	13, // 36: softserve.GitServerManagement.GetUser:input_type -> softserve.GetUserRequest
-	14, // 37: softserve.GitServerManagement.ListUsers:input_type -> softserve.ListUsersRequest
-	16, // 38: softserve.GitServerManagement.UpdateUser:input_type -> softserve.UpdateUserRequest
-	17, // 39: softserve.GitServerManagement.AddPublicKey:input_type -> softserve.AddPublicKeyRequest
-	18, // 40: softserve.GitServerManagement.RemovePublicKey:input_type -> softserve.RemovePublicKeyRequest
-	19, // 41: softserve.GitServerManagement.ListPublicKeys:input_type -> softserve.ListPublicKeysRequest
-	22, // 42: softserve.GitServerManagement.AddCollaborator:input_type -> softserve.AddCollaboratorRequest
-	23, // 43: softserve.GitServerManagement.RemoveCollaborator:input_type -> softserve.RemoveCollaboratorRequest
-	24, // 44: softserve.GitServerManagement.ListCollaborators:input_type -> softserve.ListCollaboratorsRequest
-	27, // 45: softserve.GitServerManagement.CreateAccessToken:input_type -> softserve.CreateAccessTokenRequest
-	28, // 46: softserve.GitServerManagement.DeleteAccessToken:input_type -> softserve.DeleteAccessTokenRequest
-	29, // 47: softserve.GitServerManagement.ListAccessTokens:input_type -> softserve.ListAccessTokensRequest
-	32, // 48: softserve.GitServerManagement.CreateWebhook:input_type -> softserve.CreateWebhookRequest
-	33, // 49: softserve.GitServerManagement.DeleteWebhook:input_type -> softserve.DeleteWebhookRequest
-	34, // 50: softserve.GitServerManagement.GetWebhook:input_type -> softserve.GetWebhookRequest
-	35, // 51: softserve.GitServerManagement.ListWebhooks:input_type -> softserve.ListWebhooksRequest
-	37, // 52: softserve.GitServerManagement.UpdateWebhook:input_type -> softserve.UpdateWebhookRequest
-	55, // 53: softserve.GitServerManagement.GetSettings:input_type -> google.protobuf.Empty
-	39, // 54: softserve.GitServerManagement.UpdateSettings:input_type -> softserve.UpdateSettingsRequest
-	55, // 55: softserve.GitServerManagement.HealthCheck:input_type -> google.protobuf.Empty
-	1,  // 56: softserve.GitServerManagement.CreateRepository:output_type -> softserve.Repository
-	55, // 57: softserve.GitServerManagement.DeleteRepository:output_type -> google.protobuf.Empty
-	1,  // 58: softserve.GitServerManagement.GetRepository:output_type -> softserve.Repository
-	6,  // 59: softserve.GitServerManagement.ListRepositories:output_type -> softserve.ListRepositoriesResponse
-	1,  // 60: softserve.GitServerManagement.RenameRepository:output_type -> softserve.Repository
-	1,  // 61: softserve.GitServerManagement.UpdateRepository:output_type -> softserve.Repository
-	1,  // 62: softserve.GitServerManagement.ImportRepository:output_type -> softserve.Repository
-	43, // 63: softserve.GitServerManagement.GetTree:output_type -> softserve.GetTreeResponse
-	45, // 64: softserve.GitServerManagement.GetBlob:output_type -> softserve.GetBlobResponse
-	48, // 65: softserve.GitServerManagement.GetBranches:output_type -> softserve.GetBranchesResponse
-	53, // 66: softserve.GitServerManagement.ListCommits:output_type -> softserve.ListCommitsResponse
-	6,  // 67: softserve.GitServerManagement.ListUserRepositories:output_type -> softserve.ListRepositoriesResponse
-	10, // 68: softserve.GitServerManagement.CreateUser:output_type -> softserve.User
-	55, // 69: softserve.GitServerManagement.DeleteUser:output_type -> google.protobuf.Empty
-	10, // 70: softserve.GitServerManagement.GetUser:output_type -> softserve.User
-	15, // 71: softserve.GitServerManagement.ListUsers:output_type -> softserve.ListUsersResponse
-	10, // 72: softserve.GitServerManagement.UpdateUser:output_type -> softserve.User
-	55, // 73: softserve.GitServerManagement.AddPublicKey:output_type -> google.protobuf.Empty
-	55, // 74: softserve.GitServerManagement.RemovePublicKey:output_type -> google.protobuf.Empty
-	20, // 75: softserve.GitServerManagement.ListPublicKeys:output_type -> softserve.ListPublicKeysResponse
-	55, // 76: softserve.GitServerManagement.AddCollaborator:output_type -> google.protobuf.Empty
-	55, // 77: softserve.GitServerManagement.RemoveCollaborator:output_type -> google.protobuf.Empty
-	25, // 78: softserve.GitServerManagement.ListCollaborators:output_type -> softserve.ListCollaboratorsResponse
-	26, // 79: softserve.GitServerManagement.CreateAccessToken:output_type -> softserve.AccessToken
-	55, // 80: softserve.GitServerManagement.DeleteAccessToken:output_type -> google.protobuf.Empty
-	30, // 81: softserve.GitServerManagement.ListAccessTokens:output_type -> softserve.ListAccessTokensResponse
-	31, // 82: softserve.GitServerManagement.CreateWebhook:output_type -> softserve.Webhook
-	55, // 83: softserve.GitServerManagement.DeleteWebhook:output_type -> google.protobuf.Empty
-	31, // 84: softserve.GitServerManagement.GetWebhook:output_type -> softserve.Webhook
-	36, // 85: softserve.GitServerManagement.ListWebhooks:output_type -> softserve.ListWebhooksResponse
-	31, // 86: softserve.GitServerManagement.UpdateWebhook:output_type -> softserve.Webhook
-	38, // 87: softserve.GitServerManagement.GetSettings:output_type -> softserve.ServerSettings
-	38, // 88: softserve.GitServerManagement.UpdateSettings:output_type -> softserve.ServerSettings
-	40, // 89: softserve.GitServerManagement.HealthCheck:output_type -> softserve.HealthCheckResponse
-	56, // [56:90] is the sub-list for method output_type
-	22, // [22:56] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	51, // 22: softserve.CommitDetail.commit:type_name -> softserve.Commit
+	55, // 23: softserve.CommitDetail.files:type_name -> softserve.FileDiff
+	50, // 24: softserve.Tag.tagger:type_name -> softserve.Author
+	57, // 25: softserve.ListTagsResponse.tags:type_name -> softserve.Tag
+	57, // 26: softserve.TagDetail.tag:type_name -> softserve.Tag
+	51, // 27: softserve.TagDetail.commit:type_name -> softserve.Commit
+	51, // 28: softserve.CompareResponse.commits:type_name -> softserve.Commit
+	55, // 29: softserve.CompareResponse.files:type_name -> softserve.FileDiff
+	79, // 30: softserve.RepositoryStatsResponse.last_commit:type_name -> google.protobuf.Timestamp
+	51, // 31: softserve.GetFileHistoryResponse.commits:type_name -> softserve.Commit
+	2,  // 32: softserve.GitServerManagement.CreateRepository:input_type -> softserve.CreateRepositoryRequest
+	3,  // 33: softserve.GitServerManagement.DeleteRepository:input_type -> softserve.DeleteRepositoryRequest
+	4,  // 34: softserve.GitServerManagement.GetRepository:input_type -> softserve.GetRepositoryRequest
+	5,  // 35: softserve.GitServerManagement.ListRepositories:input_type -> softserve.ListRepositoriesRequest
+	7,  // 36: softserve.GitServerManagement.RenameRepository:input_type -> softserve.RenameRepositoryRequest
+	8,  // 37: softserve.GitServerManagement.UpdateRepository:input_type -> softserve.UpdateRepositoryRequest
+	9,  // 38: softserve.GitServerManagement.ImportRepository:input_type -> softserve.ImportRepositoryRequest
+	41, // 39: softserve.GitServerManagement.GetTree:input_type -> softserve.GetTreeRequest
+	44, // 40: softserve.GitServerManagement.GetBlob:input_type -> softserve.GetBlobRequest
+	47, // 41: softserve.GitServerManagement.GetBranches:input_type -> softserve.GetBranchesRequest
+	52, // 42: softserve.GitServerManagement.ListCommits:input_type -> softserve.ListCommitsRequest
+	54, // 43: softserve.GitServerManagement.GetCommit:input_type -> softserve.GetCommitRequest
+	49, // 44: softserve.GitServerManagement.ListUserRepositories:input_type -> softserve.ListUserRepositoriesRequest
+	58, // 45: softserve.GitServerManagement.ListTags:input_type -> softserve.ListTagsRequest
+	60, // 46: softserve.GitServerManagement.GetTag:input_type -> softserve.GetTagRequest
+	62, // 47: softserve.GitServerManagement.CreateTag:input_type -> softserve.CreateTagRequest
+	63, // 48: softserve.GitServerManagement.DeleteTag:input_type -> softserve.DeleteTagRequest
+	64, // 49: softserve.GitServerManagement.CompareBranches:input_type -> softserve.CompareBranchesRequest
+	65, // 50: softserve.GitServerManagement.CompareCommits:input_type -> softserve.CompareCommitsRequest
+	67, // 51: softserve.GitServerManagement.GetDefaultBranch:input_type -> softserve.GetDefaultBranchRequest
+	68, // 52: softserve.GitServerManagement.SetDefaultBranch:input_type -> softserve.SetDefaultBranchRequest
+	70, // 53: softserve.GitServerManagement.GetCloneURLs:input_type -> softserve.GetCloneURLsRequest
+	72, // 54: softserve.GitServerManagement.GetRepositoryStats:input_type -> softserve.GetRepositoryStatsRequest
+	74, // 55: softserve.GitServerManagement.GetFileHistory:input_type -> softserve.GetFileHistoryRequest
+	76, // 56: softserve.GitServerManagement.SearchCommits:input_type -> softserve.SearchCommitsRequest
+	77, // 57: softserve.GitServerManagement.CheckPath:input_type -> softserve.CheckPathRequest
+	11, // 58: softserve.GitServerManagement.CreateUser:input_type -> softserve.CreateUserRequest
+	12, // 59: softserve.GitServerManagement.DeleteUser:input_type -> softserve.DeleteUserRequest
+	13, // 60: softserve.GitServerManagement.GetUser:input_type -> softserve.GetUserRequest
+	14, // 61: softserve.GitServerManagement.ListUsers:input_type -> softserve.ListUsersRequest
+	16, // 62: softserve.GitServerManagement.UpdateUser:input_type -> softserve.UpdateUserRequest
+	17, // 63: softserve.GitServerManagement.AddPublicKey:input_type -> softserve.AddPublicKeyRequest
+	18, // 64: softserve.GitServerManagement.RemovePublicKey:input_type -> softserve.RemovePublicKeyRequest
+	19, // 65: softserve.GitServerManagement.ListPublicKeys:input_type -> softserve.ListPublicKeysRequest
+	22, // 66: softserve.GitServerManagement.AddCollaborator:input_type -> softserve.AddCollaboratorRequest
+	23, // 67: softserve.GitServerManagement.RemoveCollaborator:input_type -> softserve.RemoveCollaboratorRequest
+	24, // 68: softserve.GitServerManagement.ListCollaborators:input_type -> softserve.ListCollaboratorsRequest
+	27, // 69: softserve.GitServerManagement.CreateAccessToken:input_type -> softserve.CreateAccessTokenRequest
+	28, // 70: softserve.GitServerManagement.DeleteAccessToken:input_type -> softserve.DeleteAccessTokenRequest
+	29, // 71: softserve.GitServerManagement.ListAccessTokens:input_type -> softserve.ListAccessTokensRequest
+	32, // 72: softserve.GitServerManagement.CreateWebhook:input_type -> softserve.CreateWebhookRequest
+	33, // 73: softserve.GitServerManagement.DeleteWebhook:input_type -> softserve.DeleteWebhookRequest
+	34, // 74: softserve.GitServerManagement.GetWebhook:input_type -> softserve.GetWebhookRequest
+	35, // 75: softserve.GitServerManagement.ListWebhooks:input_type -> softserve.ListWebhooksRequest
+	37, // 76: softserve.GitServerManagement.UpdateWebhook:input_type -> softserve.UpdateWebhookRequest
+	80, // 77: softserve.GitServerManagement.GetSettings:input_type -> google.protobuf.Empty
+	39, // 78: softserve.GitServerManagement.UpdateSettings:input_type -> softserve.UpdateSettingsRequest
+	80, // 79: softserve.GitServerManagement.HealthCheck:input_type -> google.protobuf.Empty
+	1,  // 80: softserve.GitServerManagement.CreateRepository:output_type -> softserve.Repository
+	80, // 81: softserve.GitServerManagement.DeleteRepository:output_type -> google.protobuf.Empty
+	1,  // 82: softserve.GitServerManagement.GetRepository:output_type -> softserve.Repository
+	6,  // 83: softserve.GitServerManagement.ListRepositories:output_type -> softserve.ListRepositoriesResponse
+	1,  // 84: softserve.GitServerManagement.RenameRepository:output_type -> softserve.Repository
+	1,  // 85: softserve.GitServerManagement.UpdateRepository:output_type -> softserve.Repository
+	1,  // 86: softserve.GitServerManagement.ImportRepository:output_type -> softserve.Repository
+	43, // 87: softserve.GitServerManagement.GetTree:output_type -> softserve.GetTreeResponse
+	45, // 88: softserve.GitServerManagement.GetBlob:output_type -> softserve.GetBlobResponse
+	48, // 89: softserve.GitServerManagement.GetBranches:output_type -> softserve.GetBranchesResponse
+	53, // 90: softserve.GitServerManagement.ListCommits:output_type -> softserve.ListCommitsResponse
+	56, // 91: softserve.GitServerManagement.GetCommit:output_type -> softserve.CommitDetail
+	6,  // 92: softserve.GitServerManagement.ListUserRepositories:output_type -> softserve.ListRepositoriesResponse
+	59, // 93: softserve.GitServerManagement.ListTags:output_type -> softserve.ListTagsResponse
+	61, // 94: softserve.GitServerManagement.GetTag:output_type -> softserve.TagDetail
+	61, // 95: softserve.GitServerManagement.CreateTag:output_type -> softserve.TagDetail
+	80, // 96: softserve.GitServerManagement.DeleteTag:output_type -> google.protobuf.Empty
+	66, // 97: softserve.GitServerManagement.CompareBranches:output_type -> softserve.CompareResponse
+	66, // 98: softserve.GitServerManagement.CompareCommits:output_type -> softserve.CompareResponse
+	69, // 99: softserve.GitServerManagement.GetDefaultBranch:output_type -> softserve.DefaultBranchResponse
+	69, // 100: softserve.GitServerManagement.SetDefaultBranch:output_type -> softserve.DefaultBranchResponse
+	71, // 101: softserve.GitServerManagement.GetCloneURLs:output_type -> softserve.CloneURLsResponse
+	73, // 102: softserve.GitServerManagement.GetRepositoryStats:output_type -> softserve.RepositoryStatsResponse
+	75, // 103: softserve.GitServerManagement.GetFileHistory:output_type -> softserve.GetFileHistoryResponse
+	53, // 104: softserve.GitServerManagement.SearchCommits:output_type -> softserve.ListCommitsResponse
+	78, // 105: softserve.GitServerManagement.CheckPath:output_type -> softserve.CheckPathResponse
+	10, // 106: softserve.GitServerManagement.CreateUser:output_type -> softserve.User
+	80, // 107: softserve.GitServerManagement.DeleteUser:output_type -> google.protobuf.Empty
+	10, // 108: softserve.GitServerManagement.GetUser:output_type -> softserve.User
+	15, // 109: softserve.GitServerManagement.ListUsers:output_type -> softserve.ListUsersResponse
+	10, // 110: softserve.GitServerManagement.UpdateUser:output_type -> softserve.User
+	80, // 111: softserve.GitServerManagement.AddPublicKey:output_type -> google.protobuf.Empty
+	80, // 112: softserve.GitServerManagement.RemovePublicKey:output_type -> google.protobuf.Empty
+	20, // 113: softserve.GitServerManagement.ListPublicKeys:output_type -> softserve.ListPublicKeysResponse
+	80, // 114: softserve.GitServerManagement.AddCollaborator:output_type -> google.protobuf.Empty
+	80, // 115: softserve.GitServerManagement.RemoveCollaborator:output_type -> google.protobuf.Empty
+	25, // 116: softserve.GitServerManagement.ListCollaborators:output_type -> softserve.ListCollaboratorsResponse
+	26, // 117: softserve.GitServerManagement.CreateAccessToken:output_type -> softserve.AccessToken
+	80, // 118: softserve.GitServerManagement.DeleteAccessToken:output_type -> google.protobuf.Empty
+	30, // 119: softserve.GitServerManagement.ListAccessTokens:output_type -> softserve.ListAccessTokensResponse
+	31, // 120: softserve.GitServerManagement.CreateWebhook:output_type -> softserve.Webhook
+	80, // 121: softserve.GitServerManagement.DeleteWebhook:output_type -> google.protobuf.Empty
+	31, // 122: softserve.GitServerManagement.GetWebhook:output_type -> softserve.Webhook
+	36, // 123: softserve.GitServerManagement.ListWebhooks:output_type -> softserve.ListWebhooksResponse
+	31, // 124: softserve.GitServerManagement.UpdateWebhook:output_type -> softserve.Webhook
+	38, // 125: softserve.GitServerManagement.GetSettings:output_type -> softserve.ServerSettings
+	38, // 126: softserve.GitServerManagement.UpdateSettings:output_type -> softserve.ServerSettings
+	40, // 127: softserve.GitServerManagement.HealthCheck:output_type -> softserve.HealthCheckResponse
+	80, // [80:128] is the sub-list for method output_type
+	32, // [32:80] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_pkg_grpc_service_proto_init() }
@@ -3667,13 +5385,20 @@ func file_pkg_grpc_service_proto_init() {
 	file_pkg_grpc_service_proto_msgTypes[40].OneofWrappers = []any{}
 	file_pkg_grpc_service_proto_msgTypes[43].OneofWrappers = []any{}
 	file_pkg_grpc_service_proto_msgTypes[51].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[54].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[56].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[61].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[73].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[75].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[76].OneofWrappers = []any{}
+	file_pkg_grpc_service_proto_msgTypes[77].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pkg_grpc_service_proto_rawDesc), len(file_pkg_grpc_service_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   53,
+			NumMessages:   78,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

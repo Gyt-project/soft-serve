@@ -6,11 +6,11 @@ import (
 
 	"charm.land/log/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
-	"github.com/charmbracelet/soft-serve/git"
-	"github.com/charmbracelet/soft-serve/pkg/backend"
-	"github.com/charmbracelet/soft-serve/pkg/config"
-	"github.com/charmbracelet/soft-serve/pkg/ui/keymap"
-	"github.com/charmbracelet/soft-serve/pkg/ui/styles"
+	"github.com/Gyt-project/soft-serve/git"
+	"github.com/Gyt-project/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/config"
+	"github.com/Gyt-project/soft-serve/pkg/ui/keymap"
+	"github.com/Gyt-project/soft-serve/pkg/ui/styles"
 	"github.com/charmbracelet/ssh"
 	zone "github.com/lrstanley/bubblezone/v2"
 )

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"charm.land/log/v2"
-	"github.com/charmbracelet/soft-serve/pkg/config"
+	"github.com/Gyt-project/soft-serve/pkg/config"
 )
 
 // NewLogger returns a new logger with default settings.

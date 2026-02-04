@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package softserve;
 
-option go_package = "github.com/charmbracelet/soft-serve/pkg/grpc;grpc";
+option go_package = "github.com/Gyt-project/soft-serve/pkg/grpc;grpc";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
@@ -17,13 +17,35 @@ service GitServerManagement {
   rpc RenameRepository(RenameRepositoryRequest) returns (Repository);
   rpc UpdateRepository(UpdateRepositoryRequest) returns (Repository);
   rpc ImportRepository(ImportRepositoryRequest) returns (Repository);
-  
+
   // Repository Content Browsing
   rpc GetTree(GetTreeRequest) returns (GetTreeResponse);
   rpc GetBlob(GetBlobRequest) returns (GetBlobResponse);
   rpc GetBranches(GetBranchesRequest) returns (GetBranchesResponse);
   rpc ListCommits(ListCommitsRequest) returns (ListCommitsResponse);
+  rpc GetCommit(GetCommitRequest) returns (CommitDetail);
   rpc ListUserRepositories(ListUserRepositoriesRequest) returns (ListRepositoriesResponse);
+
+  // Tags
+  rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
+  rpc GetTag(GetTagRequest) returns (TagDetail);
+  rpc CreateTag(CreateTagRequest) returns (TagDetail);
+  rpc DeleteTag(DeleteTagRequest) returns (google.protobuf.Empty);
+
+  // Diff & Compare
+  rpc CompareBranches(CompareBranchesRequest) returns (CompareResponse);
+  rpc CompareCommits(CompareCommitsRequest) returns (CompareResponse);
+
+  // Repository Info
+  rpc GetDefaultBranch(GetDefaultBranchRequest) returns (DefaultBranchResponse);
+  rpc SetDefaultBranch(SetDefaultBranchRequest) returns (DefaultBranchResponse);
+  rpc GetCloneURLs(GetCloneURLsRequest) returns (CloneURLsResponse);
+  rpc GetRepositoryStats(GetRepositoryStatsRequest) returns (RepositoryStatsResponse);
+
+  // Advanced Operations
+  rpc GetFileHistory(GetFileHistoryRequest) returns (GetFileHistoryResponse);
+  rpc SearchCommits(SearchCommitsRequest) returns (ListCommitsResponse);
+  rpc CheckPath(CheckPathRequest) returns (CheckPathResponse);
 
   // User Management
   rpc CreateUser(CreateUserRequest) returns (User);
@@ -31,7 +53,7 @@ service GitServerManagement {
   rpc GetUser(GetUserRequest) returns (User);
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
   rpc UpdateUser(UpdateUserRequest) returns (User);
-  
+
   // User Public Keys
   rpc AddPublicKey(AddPublicKeyRequest) returns (google.protobuf.Empty);
   rpc RemovePublicKey(RemovePublicKeyRequest) returns (google.protobuf.Empty);
@@ -389,4 +411,164 @@ message ListCommitsResponse {
   int32 page = 2;              // Current page
   int32 per_page = 3;          // Commits per page
   bool has_more = 4;           // Whether there are more commits available
+}
+
+// Single Commit Detail with Diff
+message GetCommitRequest {
+  string repo_name = 1;
+  string sha = 2;              // Commit SHA
+}
+
+message FileDiff {
+  string path = 1;
+  int32 additions = 2;
+  int32 deletions = 3;
+  string status = 4;           // "added", "modified", "deleted", "renamed"
+  optional string old_path = 5; // For renamed files
+}
+
+message CommitDetail {
+  Commit commit = 1;
+  repeated FileDiff files = 2;
+  int32 total_additions = 3;
+  int32 total_deletions = 4;
+  int32 files_changed = 5;
+  string patch = 6;            // Full patch text
+}
+
+// Tags Messages
+message Tag {
+  string name = 1;             // Tag name
+  string full_name = 2;        // Full reference (refs/tags/...)
+  string commit_sha = 3;       // Commit the tag points to
+  optional string message = 4; // Annotation message (for annotated tags)
+  optional Author tagger = 5;  // Tagger info (for annotated tags)
+}
+
+message ListTagsRequest {
+  string repo_name = 1;
+}
+
+message ListTagsResponse {
+  repeated Tag tags = 1;
+}
+
+message GetTagRequest {
+  string repo_name = 1;
+  string tag_name = 2;
+}
+
+message TagDetail {
+  Tag tag = 1;
+  Commit commit = 2;           // The commit the tag points to
+}
+
+message CreateTagRequest {
+  string repo_name = 1;
+  string tag_name = 2;
+  string target = 3;           // Branch/commit to tag
+  optional string message = 4; // For annotated tags
+  optional string tagger_name = 5;
+  optional string tagger_email = 6;
+}
+
+message DeleteTagRequest {
+  string repo_name = 1;
+  string tag_name = 2;
+}
+
+// Compare Messages
+message CompareBranchesRequest {
+  string repo_name = 1;
+  string base_branch = 2;
+  string head_branch = 3;
+}
+
+message CompareCommitsRequest {
+  string repo_name = 1;
+  string base_sha = 2;
+  string head_sha = 3;
+}
+
+message CompareResponse {
+  repeated Commit commits = 1; // Commits in head not in base
+  repeated FileDiff files = 2;
+  int32 total_additions = 3;
+  int32 total_deletions = 4;
+  int32 files_changed = 5;
+  int32 commits_ahead = 6;
+}
+
+// Default Branch Messages
+message GetDefaultBranchRequest {
+  string repo_name = 1;
+}
+
+message SetDefaultBranchRequest {
+  string repo_name = 1;
+  string branch_name = 2;
+}
+
+message DefaultBranchResponse {
+  string branch_name = 1;
+}
+
+// Clone URLs
+message GetCloneURLsRequest {
+  string repo_name = 1;
+}
+
+message CloneURLsResponse {
+  string ssh_url = 1;
+  string http_url = 2;
+  string git_url = 3;
+}
+
+// Repository Stats
+message GetRepositoryStatsRequest {
+  string repo_name = 1;
+}
+
+message RepositoryStatsResponse {
+  int64 size_bytes = 1;
+  int64 commit_count = 2;
+  int32 branch_count = 3;
+  int32 tag_count = 4;
+  int32 contributor_count = 5;
+  google.protobuf.Timestamp last_commit = 6;
+}
+
+// File History
+message GetFileHistoryRequest {
+  string repo_name = 1;
+  string path = 2;
+  optional string ref = 3;     // Branch/tag to search (default: HEAD)
+  optional int32 limit = 4;    // Max commits to return (default: 50)
+}
+
+message GetFileHistoryResponse {
+  repeated Commit commits = 1;
+}
+
+// Search Commits
+message SearchCommitsRequest {
+  string repo_name = 1;
+  string query = 2;            // Search in commit message
+  optional string author = 3;  // Filter by author
+  optional string ref = 4;     // Branch/tag to search (default: HEAD)
+  optional int32 limit = 5;    // Max results (default: 30, max: 100)
+}
+
+// Check Path
+message CheckPathRequest {
+  string repo_name = 1;
+  string path = 2;
+  optional string ref = 3;     // Branch/tag/commit (default: HEAD)
+}
+
+message CheckPathResponse {
+  bool exists = 1;
+  bool is_dir = 2;
+  bool is_file = 3;
+  optional int64 size = 4;     // File size if it's a file
 }

@@ -5,8 +5,8 @@ import (
 	"net"
 
 	"charm.land/log/v2"
-	"github.com/charmbracelet/soft-serve/pkg/backend"
-	"github.com/charmbracelet/soft-serve/pkg/config"
+	"github.com/Gyt-project/soft-serve/pkg/backend"
+	"github.com/Gyt-project/soft-serve/pkg/config"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
