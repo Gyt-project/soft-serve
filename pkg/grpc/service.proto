@@ -22,6 +22,8 @@ service GitServerManagement {
   rpc GetTree(GetTreeRequest) returns (GetTreeResponse);
   rpc GetBlob(GetBlobRequest) returns (GetBlobResponse);
   rpc GetBranches(GetBranchesRequest) returns (GetBranchesResponse);
+  rpc CreateBranch(CreateBranchRequest) returns (Branch);
+  rpc DeleteBranch(DeleteBranchRequest) returns (google.protobuf.Empty);
   rpc ListCommits(ListCommitsRequest) returns (ListCommitsResponse);
   rpc GetCommit(GetCommitRequest) returns (CommitDetail);
   rpc ListUserRepositories(ListUserRepositoriesRequest) returns (ListRepositoriesResponse);
@@ -366,22 +368,33 @@ message GetBlobResponse {
 
 // Branch Messages
 message Branch {
-  string name = 1;        // Short branch name (e.g., "main")
-  string full_name = 2;   // Full reference name (e.g., "refs/heads/main")
-  string commit_sha = 3;  // Commit SHA the branch points to
+  string name = 1; // Short branch name (e.g., "main")
+  string full_name = 2; // Full reference name (e.g., "refs/heads/main")
+  string commit_sha = 3; // Commit SHA the branch points to
 }
 
 message GetBranchesRequest {
-  string repo_name = 1;   // Repository name
+  string repo_name = 1; // Repository name
 }
 
 message GetBranchesResponse {
   repeated Branch branches = 1;
 }
 
+message CreateBranchRequest {
+  string repo_name = 1; // Repository name
+  string branch_name = 2; // New branch name
+  string source = 3; // Source branch name or commit SHA
+}
+
+message DeleteBranchRequest {
+  string repo_name = 1; // Repository name
+  string branch_name = 2; // Branch to delete
+}
+
 // List user repositories
 message ListUserRepositoriesRequest {
-  string username = 1;    // Username to get repositories for
+  string username = 1; // Username to get repositories for
 }
 
 // Commit Messages
@@ -392,15 +405,15 @@ message Author {
 }
 
 message Commit {
-  string sha = 1;              // Commit SHA
-  Author author = 2;           // Author information
-  Author committer = 3;        // Committer information
-  string message = 4;          // Commit message
+  string sha = 1; // Commit SHA
+  Author author = 2; // Author information
+  Author committer = 3; // Committer information
+  string message = 4; // Commit message
   repeated string parent_shas = 5; // Parent commit SHAs
 }
 
 message ListCommitsRequest {
-  string repo_name = 1;        // Repository name
+  string repo_name = 1; // Repository name
   optional string ref = 2;     // Branch/tag/commit to start from (defaults to HEAD)
   optional int32 limit = 3;    // Maximum number of commits to return (default: 30, max: 100)
   optional int32 page = 4;     // Page number for pagination (starts at 1)
@@ -408,22 +421,22 @@ message ListCommitsRequest {
 
 message ListCommitsResponse {
   repeated Commit commits = 1;
-  int32 page = 2;              // Current page
-  int32 per_page = 3;          // Commits per page
-  bool has_more = 4;           // Whether there are more commits available
+  int32 page = 2; // Current page
+  int32 per_page = 3; // Commits per page
+  bool has_more = 4; // Whether there are more commits available
 }
 
 // Single Commit Detail with Diff
 message GetCommitRequest {
   string repo_name = 1;
-  string sha = 2;              // Commit SHA
+  string sha = 2; // Commit SHA
 }
 
 message FileDiff {
   string path = 1;
   int32 additions = 2;
   int32 deletions = 3;
-  string status = 4;           // "added", "modified", "deleted", "renamed"
+  string status = 4; // "added", "modified", "deleted", "renamed"
   optional string old_path = 5; // For renamed files
 }
 
@@ -433,14 +446,14 @@ message CommitDetail {
   int32 total_additions = 3;
   int32 total_deletions = 4;
   int32 files_changed = 5;
-  string patch = 6;            // Full patch text
+  string patch = 6; // Full patch text
 }
 
 // Tags Messages
 message Tag {
-  string name = 1;             // Tag name
-  string full_name = 2;        // Full reference (refs/tags/...)
-  string commit_sha = 3;       // Commit the tag points to
+  string name = 1; // Tag name
+  string full_name = 2; // Full reference (refs/tags/...)
+  string commit_sha = 3; // Commit the tag points to
   optional string message = 4; // Annotation message (for annotated tags)
   optional Author tagger = 5;  // Tagger info (for annotated tags)
 }
@@ -460,13 +473,13 @@ message GetTagRequest {
 
 message TagDetail {
   Tag tag = 1;
-  Commit commit = 2;           // The commit the tag points to
+  Commit commit = 2; // The commit the tag points to
 }
 
 message CreateTagRequest {
   string repo_name = 1;
   string tag_name = 2;
-  string target = 3;           // Branch/commit to tag
+  string target = 3; // Branch/commit to tag
   optional string message = 4; // For annotated tags
   optional string tagger_name = 5;
   optional string tagger_email = 6;
@@ -497,6 +510,7 @@ message CompareResponse {
   int32 total_deletions = 4;
   int32 files_changed = 5;
   int32 commits_ahead = 6;
+  string patch = 7; // Full unified diff patch
 }
 
 // Default Branch Messages
@@ -553,7 +567,7 @@ message GetFileHistoryResponse {
 // Search Commits
 message SearchCommitsRequest {
   string repo_name = 1;
-  string query = 2;            // Search in commit message
+  string query = 2; // Search in commit message
   optional string author = 3;  // Filter by author
   optional string ref = 4;     // Branch/tag to search (default: HEAD)
   optional int32 limit = 5;    // Max results (default: 30, max: 100)

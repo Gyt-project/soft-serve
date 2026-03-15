@@ -924,6 +924,62 @@ func (s *Server) GetBranches(ctx context.Context, req *GetBranchesRequest) (*Get
 	}, nil
 }
 
+// CreateBranch creates a new branch from a source branch or commit SHA
+func (s *Server) CreateBranch(ctx context.Context, req *CreateBranchRequest) (*Branch, error) {
+	if req.RepoName == "" || req.BranchName == "" || req.Source == "" {
+		return nil, status.Error(codes.InvalidArgument, "repo_name, branch_name, and source are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	_, err = git.NewCommand("branch", req.BranchName, req.Source).RunInDir(gitRepo.Path)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to create branch: %v", err)
+	}
+
+	sha, err := gitRepo.BranchCommitID(req.BranchName)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to read new branch: %v", err)
+	}
+
+	return &Branch{
+		Name:      req.BranchName,
+		FullName:  "refs/heads/" + req.BranchName,
+		CommitSha: sha,
+	}, nil
+}
+
+// DeleteBranch deletes a branch
+func (s *Server) DeleteBranch(ctx context.Context, req *DeleteBranchRequest) (*emptypb.Empty, error) {
+	if req.RepoName == "" || req.BranchName == "" {
+		return nil, status.Error(codes.InvalidArgument, "repo_name and branch_name are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	if err := gitRepo.DeleteBranch(req.BranchName); err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to delete branch: %v", err)
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
 // ListUserRepositories lists all repositories for a specific user
 func (s *Server) ListUserRepositories(ctx context.Context, req *ListUserRepositoriesRequest) (*ListRepositoriesResponse, error) {
 	if req.Username == "" {
@@ -1778,14 +1834,8 @@ func (s *Server) CheckPath(ctx context.Context, req *CheckPathRequest) (*CheckPa
 
 // Helper function for comparing commits
 func (s *Server) compareCommits(gitRepo *git.Repository, baseSHA, headSHA string) (*CompareResponse, error) {
-	// Simplified implementation - get head commit for diff
-	headCommit, err := gitRepo.CommitByRevision(headSHA)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get head commit: %v", err)
-	}
-
-	// Get diff for head commit
-	diff, err := gitRepo.Diff(headCommit)
+	// Get the full diff between base and head (all changes introduced by head relative to base)
+	diff, err := gitRepo.DiffBetween(baseSHA, headSHA)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get diff: %v", err)
 	}
@@ -1796,22 +1846,21 @@ func (s *Server) compareCommits(gitRepo *git.Repository, baseSHA, headSHA string
 	totalDel := int32(0)
 
 	for _, file := range diff.Files {
-		// Determine status based on file names
-		status := "modified"
+		fileStatus := "modified"
 		oldName := file.OldName()
 		if oldName == "" || oldName == "/dev/null" {
-			status = "added"
+			fileStatus = "added"
 		} else if file.Name == "/dev/null" {
-			status = "deleted"
+			fileStatus = "deleted"
 		} else if oldName != file.Name {
-			status = "renamed"
+			fileStatus = "renamed"
 		}
 
 		fileDiff := &FileDiff{
 			Path:      file.Name,
 			Additions: int32(file.NumAdditions()),
 			Deletions: int32(file.NumDeletions()),
-			Status:    status,
+			Status:    fileStatus,
 		}
 
 		if oldName != "" && oldName != file.Name && oldName != "/dev/null" {
@@ -1823,14 +1872,47 @@ func (s *Server) compareCommits(gitRepo *git.Repository, baseSHA, headSHA string
 		totalDel += int32(file.NumDeletions())
 	}
 
-	// Return simplified response (commits list would need more complex git operations)
+	// Get commits in head that are not in base
+	betweenCommits, err := gitRepo.CommitsBetween(baseSHA, headSHA)
+	if err != nil {
+		// Non-fatal: return empty list if the rev-list fails
+		betweenCommits = nil
+	}
+
+	protoCommits := make([]*Commit, 0, len(betweenCommits))
+	for _, c := range betweenCommits {
+		parentSHAs := make([]string, c.ParentsCount())
+		for j := 0; j < c.ParentsCount(); j++ {
+			pid, perr := c.ParentID(j)
+			if perr == nil && pid != nil {
+				parentSHAs[j] = pid.String()
+			}
+		}
+		protoCommits = append(protoCommits, &Commit{
+			Sha:     c.ID.String(),
+			Message: c.Message,
+			Author: &Author{
+				Name:  c.Author.Name,
+				Email: c.Author.Email,
+				When:  timestamppb.New(c.Author.When),
+			},
+			Committer: &Author{
+				Name:  c.Committer.Name,
+				Email: c.Committer.Email,
+				When:  timestamppb.New(c.Committer.When),
+			},
+			ParentShas: parentSHAs,
+		})
+	}
+
 	return &CompareResponse{
-		Commits:        []*Commit{}, // Simplified - would need git rev-list
+		Commits:        protoCommits,
 		Files:          fileDiffs,
 		TotalAdditions: totalAdd,
 		TotalDeletions: totalDel,
 		FilesChanged:   int32(len(fileDiffs)),
-		CommitsAhead:   0, // Simplified
+		CommitsAhead:   int32(len(protoCommits)),
+		Patch:          diff.Patch(),
 	}, nil
 }
 

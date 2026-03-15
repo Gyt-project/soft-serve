@@ -1,6 +1,8 @@
 package git
 
 import (
+	"bytes"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -149,6 +151,53 @@ func (r *Repository) Diff(commit *Commit) (*Diff, error) {
 		return nil, err
 	}
 	return toDiff(diff), nil
+}
+
+// DiffBetween returns the diff between baseSHA and headSHA (all changes
+// introduced by headSHA relative to baseSHA, not just the last commit).
+func (r *Repository) DiffBetween(baseSHA, headSHA string) (*Diff, error) {
+	diff, err := r.Repository.Diff(headSHA, DiffMaxFiles, DiffMaxFileLines, DiffMaxLineChars, git.DiffOptions{
+		Base: baseSHA,
+		CommandOptions: git.CommandOptions{
+			Envs: []string{"GIT_CONFIG_GLOBAL=/dev/null"},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return toDiff(diff), nil
+}
+
+// RawDiffBetween runs `git diff <baseSHA> <headSHA>` and returns the raw
+// unified diff patch text.
+func (r *Repository) RawDiffBetween(baseSHA, headSHA string) (string, error) {
+	var buf bytes.Buffer
+	stderr := new(bytes.Buffer)
+	cmd := git.NewCommand("diff").
+		AddEnvs("GIT_CONFIG_GLOBAL=/dev/null").
+		AddArgs("--full-index", "-M", baseSHA, "--end-of-options", headSHA)
+	if err := cmd.RunInDirPipeline(&buf, stderr, r.Repository.Path()); err != nil {
+		return "", fmt.Errorf("git diff %s..%s: %w: stderr: %s", baseSHA, headSHA, err, stderr.String())
+	}
+	return buf.String(), nil
+}
+
+// CommitsBetween returns commits reachable from headSHA but not from baseSHA
+// (i.e. the commits added in the head branch since it diverged from base).
+func (r *Repository) CommitsBetween(baseSHA, headSHA string) (Commits, error) {
+	cs, err := r.Repository.RevList([]string{baseSHA + ".." + headSHA})
+	if err != nil {
+		return nil, err
+	}
+	commits := make(Commits, len(cs))
+	copy(commits, cs)
+	return commits, nil
+}
+
+// CountCommitsBetween returns the number of commits reachable from headSHA
+// but not from baseSHA.
+func (r *Repository) CountCommitsBetween(baseSHA, headSHA string) (int64, error) {
+	return r.Repository.RevListCount([]string{baseSHA + ".." + headSHA})
 }
 
 // Patch returns the patch for the given reference.

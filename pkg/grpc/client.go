@@ -83,6 +83,15 @@ func (c *Client) GetBranches(ctx context.Context, req *GetBranchesRequest) (*Get
 	return c.client.GetBranches(ctx, req)
 }
 
+func (c *Client) CreateBranch(ctx context.Context, req *CreateBranchRequest) (*Branch, error) {
+	return c.client.CreateBranch(ctx, req)
+}
+
+func (c *Client) DeleteBranch(ctx context.Context, req *DeleteBranchRequest) error {
+	_, err := c.client.DeleteBranch(ctx, req)
+	return err
+}
+
 func (c *Client) ListCommits(ctx context.Context, req *ListCommitsRequest) (*ListCommitsResponse, error) {
 	return c.client.ListCommits(ctx, req)
 }
