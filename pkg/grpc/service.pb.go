@@ -4819,6 +4819,159 @@ func (x *CheckPathResponse) GetSize() int64 {
 	return 0
 }
 
+// Merge Branches
+type MergeBranchesRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	RepoName       string                 `protobuf:"bytes,1,opt,name=repo_name,json=repoName,proto3" json:"repo_name,omitempty"`          // Repository name
+	BaseBranch     string                 `protobuf:"bytes,2,opt,name=base_branch,json=baseBranch,proto3" json:"base_branch,omitempty"`    // Branch to merge into
+	HeadBranch     string                 `protobuf:"bytes,3,opt,name=head_branch,json=headBranch,proto3" json:"head_branch,omitempty"`    // Branch to merge from
+	MergeMethod    string                 `protobuf:"bytes,4,opt,name=merge_method,json=mergeMethod,proto3" json:"merge_method,omitempty"` // "merge" | "squash" | "rebase"
+	CommitTitle    string                 `protobuf:"bytes,5,opt,name=commit_title,json=commitTitle,proto3" json:"commit_title,omitempty"` // Optional commit title override
+	CommitterName  string                 `protobuf:"bytes,6,opt,name=committer_name,json=committerName,proto3" json:"committer_name,omitempty"`
+	CommitterEmail string                 `protobuf:"bytes,7,opt,name=committer_email,json=committerEmail,proto3" json:"committer_email,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *MergeBranchesRequest) Reset() {
+	*x = MergeBranchesRequest{}
+	mi := &file_service_proto_msgTypes[80]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MergeBranchesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MergeBranchesRequest) ProtoMessage() {}
+
+func (x *MergeBranchesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[80]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MergeBranchesRequest.ProtoReflect.Descriptor instead.
+func (*MergeBranchesRequest) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{80}
+}
+
+func (x *MergeBranchesRequest) GetRepoName() string {
+	if x != nil {
+		return x.RepoName
+	}
+	return ""
+}
+
+func (x *MergeBranchesRequest) GetBaseBranch() string {
+	if x != nil {
+		return x.BaseBranch
+	}
+	return ""
+}
+
+func (x *MergeBranchesRequest) GetHeadBranch() string {
+	if x != nil {
+		return x.HeadBranch
+	}
+	return ""
+}
+
+func (x *MergeBranchesRequest) GetMergeMethod() string {
+	if x != nil {
+		return x.MergeMethod
+	}
+	return ""
+}
+
+func (x *MergeBranchesRequest) GetCommitTitle() string {
+	if x != nil {
+		return x.CommitTitle
+	}
+	return ""
+}
+
+func (x *MergeBranchesRequest) GetCommitterName() string {
+	if x != nil {
+		return x.CommitterName
+	}
+	return ""
+}
+
+func (x *MergeBranchesRequest) GetCommitterEmail() string {
+	if x != nil {
+		return x.CommitterEmail
+	}
+	return ""
+}
+
+type MergeBranchesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Merged        bool                   `protobuf:"varint,1,opt,name=merged,proto3" json:"merged,omitempty"`
+	Sha           string                 `protobuf:"bytes,2,opt,name=sha,proto3" json:"sha,omitempty"` // SHA of the resulting merge commit
+	Message       string                 `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MergeBranchesResponse) Reset() {
+	*x = MergeBranchesResponse{}
+	mi := &file_service_proto_msgTypes[81]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MergeBranchesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MergeBranchesResponse) ProtoMessage() {}
+
+func (x *MergeBranchesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_service_proto_msgTypes[81]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MergeBranchesResponse.ProtoReflect.Descriptor instead.
+func (*MergeBranchesResponse) Descriptor() ([]byte, []int) {
+	return file_service_proto_rawDescGZIP(), []int{81}
+}
+
+func (x *MergeBranchesResponse) GetMerged() bool {
+	if x != nil {
+		return x.Merged
+	}
+	return false
+}
+
+func (x *MergeBranchesResponse) GetSha() string {
+	if x != nil {
+		return x.Sha
+	}
+	return ""
+}
+
+func (x *MergeBranchesResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_service_proto protoreflect.FileDescriptor
 
 const file_service_proto_rawDesc = "" +
@@ -5205,14 +5358,28 @@ const file_service_proto_rawDesc = "" +
 	"\x06is_dir\x18\x02 \x01(\bR\x05isDir\x12\x17\n" +
 	"\ais_file\x18\x03 \x01(\bR\x06isFile\x12\x17\n" +
 	"\x04size\x18\x04 \x01(\x03H\x00R\x04size\x88\x01\x01B\a\n" +
-	"\x05_size*k\n" +
+	"\x05_size\"\x8b\x02\n" +
+	"\x14MergeBranchesRequest\x12\x1b\n" +
+	"\trepo_name\x18\x01 \x01(\tR\brepoName\x12\x1f\n" +
+	"\vbase_branch\x18\x02 \x01(\tR\n" +
+	"baseBranch\x12\x1f\n" +
+	"\vhead_branch\x18\x03 \x01(\tR\n" +
+	"headBranch\x12!\n" +
+	"\fmerge_method\x18\x04 \x01(\tR\vmergeMethod\x12!\n" +
+	"\fcommit_title\x18\x05 \x01(\tR\vcommitTitle\x12%\n" +
+	"\x0ecommitter_name\x18\x06 \x01(\tR\rcommitterName\x12'\n" +
+	"\x0fcommitter_email\x18\a \x01(\tR\x0ecommitterEmail\"[\n" +
+	"\x15MergeBranchesResponse\x12\x16\n" +
+	"\x06merged\x18\x01 \x01(\bR\x06merged\x12\x10\n" +
+	"\x03sha\x18\x02 \x01(\tR\x03sha\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage*k\n" +
 	"\vAccessLevel\x12\x1c\n" +
 	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\r\n" +
 	"\tNO_ACCESS\x10\x01\x12\r\n" +
 	"\tREAD_ONLY\x10\x02\x12\x0e\n" +
 	"\n" +
 	"READ_WRITE\x10\x03\x12\x10\n" +
-	"\fADMIN_ACCESS\x10\x042\xfc\x1d\n" +
+	"\fADMIN_ACCESS\x10\x042\xd0\x1e\n" +
 	"\x13GitServerManagement\x12M\n" +
 	"\x10CreateRepository\x12\".softserve.CreateRepositoryRequest\x1a\x15.softserve.Repository\x12N\n" +
 	"\x10DeleteRepository\x12\".softserve.DeleteRepositoryRequest\x1a\x16.google.protobuf.Empty\x12G\n" +
@@ -5241,7 +5408,8 @@ const file_service_proto_rawDesc = "" +
 	"\x12GetRepositoryStats\x12$.softserve.GetRepositoryStatsRequest\x1a\".softserve.RepositoryStatsResponse\x12U\n" +
 	"\x0eGetFileHistory\x12 .softserve.GetFileHistoryRequest\x1a!.softserve.GetFileHistoryResponse\x12P\n" +
 	"\rSearchCommits\x12\x1f.softserve.SearchCommitsRequest\x1a\x1e.softserve.ListCommitsResponse\x12F\n" +
-	"\tCheckPath\x12\x1b.softserve.CheckPathRequest\x1a\x1c.softserve.CheckPathResponse\x12;\n" +
+	"\tCheckPath\x12\x1b.softserve.CheckPathRequest\x1a\x1c.softserve.CheckPathResponse\x12R\n" +
+	"\rMergeBranches\x12\x1f.softserve.MergeBranchesRequest\x1a .softserve.MergeBranchesResponse\x12;\n" +
 	"\n" +
 	"CreateUser\x12\x1c.softserve.CreateUserRequest\x1a\x0f.softserve.User\x12B\n" +
 	"\n" +
@@ -5282,7 +5450,7 @@ func file_service_proto_rawDescGZIP() []byte {
 }
 
 var file_service_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 80)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 82)
 var file_service_proto_goTypes = []any{
 	(AccessLevel)(0),                    // 0: softserve.AccessLevel
 	(*Repository)(nil),                  // 1: softserve.Repository
@@ -5365,29 +5533,31 @@ var file_service_proto_goTypes = []any{
 	(*SearchCommitsRequest)(nil),        // 78: softserve.SearchCommitsRequest
 	(*CheckPathRequest)(nil),            // 79: softserve.CheckPathRequest
 	(*CheckPathResponse)(nil),           // 80: softserve.CheckPathResponse
-	(*timestamppb.Timestamp)(nil),       // 81: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),               // 82: google.protobuf.Empty
+	(*MergeBranchesRequest)(nil),        // 81: softserve.MergeBranchesRequest
+	(*MergeBranchesResponse)(nil),       // 82: softserve.MergeBranchesResponse
+	(*timestamppb.Timestamp)(nil),       // 83: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),               // 84: google.protobuf.Empty
 }
 var file_service_proto_depIdxs = []int32{
-	81, // 0: softserve.Repository.created_at:type_name -> google.protobuf.Timestamp
-	81, // 1: softserve.Repository.updated_at:type_name -> google.protobuf.Timestamp
+	83, // 0: softserve.Repository.created_at:type_name -> google.protobuf.Timestamp
+	83, // 1: softserve.Repository.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: softserve.ListRepositoriesResponse.repositories:type_name -> softserve.Repository
 	10, // 3: softserve.ListUsersResponse.users:type_name -> softserve.User
 	0,  // 4: softserve.Collaborator.access_level:type_name -> softserve.AccessLevel
 	0,  // 5: softserve.AddCollaboratorRequest.access_level:type_name -> softserve.AccessLevel
 	21, // 6: softserve.ListCollaboratorsResponse.collaborators:type_name -> softserve.Collaborator
-	81, // 7: softserve.AccessToken.created_at:type_name -> google.protobuf.Timestamp
-	81, // 8: softserve.AccessToken.expires_at:type_name -> google.protobuf.Timestamp
-	81, // 9: softserve.CreateAccessTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
+	83, // 7: softserve.AccessToken.created_at:type_name -> google.protobuf.Timestamp
+	83, // 8: softserve.AccessToken.expires_at:type_name -> google.protobuf.Timestamp
+	83, // 9: softserve.CreateAccessTokenRequest.expires_at:type_name -> google.protobuf.Timestamp
 	26, // 10: softserve.ListAccessTokensResponse.tokens:type_name -> softserve.AccessToken
-	81, // 11: softserve.Webhook.created_at:type_name -> google.protobuf.Timestamp
-	81, // 12: softserve.Webhook.updated_at:type_name -> google.protobuf.Timestamp
+	83, // 11: softserve.Webhook.created_at:type_name -> google.protobuf.Timestamp
+	83, // 12: softserve.Webhook.updated_at:type_name -> google.protobuf.Timestamp
 	31, // 13: softserve.ListWebhooksResponse.webhooks:type_name -> softserve.Webhook
 	0,  // 14: softserve.ServerSettings.anon_access:type_name -> softserve.AccessLevel
 	0,  // 15: softserve.UpdateSettingsRequest.anon_access:type_name -> softserve.AccessLevel
 	42, // 16: softserve.GetTreeResponse.entries:type_name -> softserve.TreeEntry
 	46, // 17: softserve.GetBranchesResponse.branches:type_name -> softserve.Branch
-	81, // 18: softserve.Author.when:type_name -> google.protobuf.Timestamp
+	83, // 18: softserve.Author.when:type_name -> google.protobuf.Timestamp
 	52, // 19: softserve.Commit.author:type_name -> softserve.Author
 	52, // 20: softserve.Commit.committer:type_name -> softserve.Author
 	53, // 21: softserve.ListCommitsResponse.commits:type_name -> softserve.Commit
@@ -5399,7 +5569,7 @@ var file_service_proto_depIdxs = []int32{
 	53, // 27: softserve.TagDetail.commit:type_name -> softserve.Commit
 	53, // 28: softserve.CompareResponse.commits:type_name -> softserve.Commit
 	57, // 29: softserve.CompareResponse.files:type_name -> softserve.FileDiff
-	81, // 30: softserve.RepositoryStatsResponse.last_commit:type_name -> google.protobuf.Timestamp
+	83, // 30: softserve.RepositoryStatsResponse.last_commit:type_name -> google.protobuf.Timestamp
 	53, // 31: softserve.GetFileHistoryResponse.commits:type_name -> softserve.Commit
 	2,  // 32: softserve.GitServerManagement.CreateRepository:input_type -> softserve.CreateRepositoryRequest
 	3,  // 33: softserve.GitServerManagement.DeleteRepository:input_type -> softserve.DeleteRepositoryRequest
@@ -5429,80 +5599,82 @@ var file_service_proto_depIdxs = []int32{
 	76, // 57: softserve.GitServerManagement.GetFileHistory:input_type -> softserve.GetFileHistoryRequest
 	78, // 58: softserve.GitServerManagement.SearchCommits:input_type -> softserve.SearchCommitsRequest
 	79, // 59: softserve.GitServerManagement.CheckPath:input_type -> softserve.CheckPathRequest
-	11, // 60: softserve.GitServerManagement.CreateUser:input_type -> softserve.CreateUserRequest
-	12, // 61: softserve.GitServerManagement.DeleteUser:input_type -> softserve.DeleteUserRequest
-	13, // 62: softserve.GitServerManagement.GetUser:input_type -> softserve.GetUserRequest
-	14, // 63: softserve.GitServerManagement.ListUsers:input_type -> softserve.ListUsersRequest
-	16, // 64: softserve.GitServerManagement.UpdateUser:input_type -> softserve.UpdateUserRequest
-	17, // 65: softserve.GitServerManagement.AddPublicKey:input_type -> softserve.AddPublicKeyRequest
-	18, // 66: softserve.GitServerManagement.RemovePublicKey:input_type -> softserve.RemovePublicKeyRequest
-	19, // 67: softserve.GitServerManagement.ListPublicKeys:input_type -> softserve.ListPublicKeysRequest
-	22, // 68: softserve.GitServerManagement.AddCollaborator:input_type -> softserve.AddCollaboratorRequest
-	23, // 69: softserve.GitServerManagement.RemoveCollaborator:input_type -> softserve.RemoveCollaboratorRequest
-	24, // 70: softserve.GitServerManagement.ListCollaborators:input_type -> softserve.ListCollaboratorsRequest
-	27, // 71: softserve.GitServerManagement.CreateAccessToken:input_type -> softserve.CreateAccessTokenRequest
-	28, // 72: softserve.GitServerManagement.DeleteAccessToken:input_type -> softserve.DeleteAccessTokenRequest
-	29, // 73: softserve.GitServerManagement.ListAccessTokens:input_type -> softserve.ListAccessTokensRequest
-	32, // 74: softserve.GitServerManagement.CreateWebhook:input_type -> softserve.CreateWebhookRequest
-	33, // 75: softserve.GitServerManagement.DeleteWebhook:input_type -> softserve.DeleteWebhookRequest
-	34, // 76: softserve.GitServerManagement.GetWebhook:input_type -> softserve.GetWebhookRequest
-	35, // 77: softserve.GitServerManagement.ListWebhooks:input_type -> softserve.ListWebhooksRequest
-	37, // 78: softserve.GitServerManagement.UpdateWebhook:input_type -> softserve.UpdateWebhookRequest
-	82, // 79: softserve.GitServerManagement.GetSettings:input_type -> google.protobuf.Empty
-	39, // 80: softserve.GitServerManagement.UpdateSettings:input_type -> softserve.UpdateSettingsRequest
-	82, // 81: softserve.GitServerManagement.HealthCheck:input_type -> google.protobuf.Empty
-	1,  // 82: softserve.GitServerManagement.CreateRepository:output_type -> softserve.Repository
-	82, // 83: softserve.GitServerManagement.DeleteRepository:output_type -> google.protobuf.Empty
-	1,  // 84: softserve.GitServerManagement.GetRepository:output_type -> softserve.Repository
-	6,  // 85: softserve.GitServerManagement.ListRepositories:output_type -> softserve.ListRepositoriesResponse
-	1,  // 86: softserve.GitServerManagement.RenameRepository:output_type -> softserve.Repository
-	1,  // 87: softserve.GitServerManagement.UpdateRepository:output_type -> softserve.Repository
-	1,  // 88: softserve.GitServerManagement.ImportRepository:output_type -> softserve.Repository
-	43, // 89: softserve.GitServerManagement.GetTree:output_type -> softserve.GetTreeResponse
-	45, // 90: softserve.GitServerManagement.GetBlob:output_type -> softserve.GetBlobResponse
-	48, // 91: softserve.GitServerManagement.GetBranches:output_type -> softserve.GetBranchesResponse
-	46, // 92: softserve.GitServerManagement.CreateBranch:output_type -> softserve.Branch
-	82, // 93: softserve.GitServerManagement.DeleteBranch:output_type -> google.protobuf.Empty
-	55, // 94: softserve.GitServerManagement.ListCommits:output_type -> softserve.ListCommitsResponse
-	58, // 95: softserve.GitServerManagement.GetCommit:output_type -> softserve.CommitDetail
-	6,  // 96: softserve.GitServerManagement.ListUserRepositories:output_type -> softserve.ListRepositoriesResponse
-	61, // 97: softserve.GitServerManagement.ListTags:output_type -> softserve.ListTagsResponse
-	63, // 98: softserve.GitServerManagement.GetTag:output_type -> softserve.TagDetail
-	63, // 99: softserve.GitServerManagement.CreateTag:output_type -> softserve.TagDetail
-	82, // 100: softserve.GitServerManagement.DeleteTag:output_type -> google.protobuf.Empty
-	68, // 101: softserve.GitServerManagement.CompareBranches:output_type -> softserve.CompareResponse
-	68, // 102: softserve.GitServerManagement.CompareCommits:output_type -> softserve.CompareResponse
-	71, // 103: softserve.GitServerManagement.GetDefaultBranch:output_type -> softserve.DefaultBranchResponse
-	71, // 104: softserve.GitServerManagement.SetDefaultBranch:output_type -> softserve.DefaultBranchResponse
-	73, // 105: softserve.GitServerManagement.GetCloneURLs:output_type -> softserve.CloneURLsResponse
-	75, // 106: softserve.GitServerManagement.GetRepositoryStats:output_type -> softserve.RepositoryStatsResponse
-	77, // 107: softserve.GitServerManagement.GetFileHistory:output_type -> softserve.GetFileHistoryResponse
-	55, // 108: softserve.GitServerManagement.SearchCommits:output_type -> softserve.ListCommitsResponse
-	80, // 109: softserve.GitServerManagement.CheckPath:output_type -> softserve.CheckPathResponse
-	10, // 110: softserve.GitServerManagement.CreateUser:output_type -> softserve.User
-	82, // 111: softserve.GitServerManagement.DeleteUser:output_type -> google.protobuf.Empty
-	10, // 112: softserve.GitServerManagement.GetUser:output_type -> softserve.User
-	15, // 113: softserve.GitServerManagement.ListUsers:output_type -> softserve.ListUsersResponse
-	10, // 114: softserve.GitServerManagement.UpdateUser:output_type -> softserve.User
-	82, // 115: softserve.GitServerManagement.AddPublicKey:output_type -> google.protobuf.Empty
-	82, // 116: softserve.GitServerManagement.RemovePublicKey:output_type -> google.protobuf.Empty
-	20, // 117: softserve.GitServerManagement.ListPublicKeys:output_type -> softserve.ListPublicKeysResponse
-	82, // 118: softserve.GitServerManagement.AddCollaborator:output_type -> google.protobuf.Empty
-	82, // 119: softserve.GitServerManagement.RemoveCollaborator:output_type -> google.protobuf.Empty
-	25, // 120: softserve.GitServerManagement.ListCollaborators:output_type -> softserve.ListCollaboratorsResponse
-	26, // 121: softserve.GitServerManagement.CreateAccessToken:output_type -> softserve.AccessToken
-	82, // 122: softserve.GitServerManagement.DeleteAccessToken:output_type -> google.protobuf.Empty
-	30, // 123: softserve.GitServerManagement.ListAccessTokens:output_type -> softserve.ListAccessTokensResponse
-	31, // 124: softserve.GitServerManagement.CreateWebhook:output_type -> softserve.Webhook
-	82, // 125: softserve.GitServerManagement.DeleteWebhook:output_type -> google.protobuf.Empty
-	31, // 126: softserve.GitServerManagement.GetWebhook:output_type -> softserve.Webhook
-	36, // 127: softserve.GitServerManagement.ListWebhooks:output_type -> softserve.ListWebhooksResponse
-	31, // 128: softserve.GitServerManagement.UpdateWebhook:output_type -> softserve.Webhook
-	38, // 129: softserve.GitServerManagement.GetSettings:output_type -> softserve.ServerSettings
-	38, // 130: softserve.GitServerManagement.UpdateSettings:output_type -> softserve.ServerSettings
-	40, // 131: softserve.GitServerManagement.HealthCheck:output_type -> softserve.HealthCheckResponse
-	82, // [82:132] is the sub-list for method output_type
-	32, // [32:82] is the sub-list for method input_type
+	81, // 60: softserve.GitServerManagement.MergeBranches:input_type -> softserve.MergeBranchesRequest
+	11, // 61: softserve.GitServerManagement.CreateUser:input_type -> softserve.CreateUserRequest
+	12, // 62: softserve.GitServerManagement.DeleteUser:input_type -> softserve.DeleteUserRequest
+	13, // 63: softserve.GitServerManagement.GetUser:input_type -> softserve.GetUserRequest
+	14, // 64: softserve.GitServerManagement.ListUsers:input_type -> softserve.ListUsersRequest
+	16, // 65: softserve.GitServerManagement.UpdateUser:input_type -> softserve.UpdateUserRequest
+	17, // 66: softserve.GitServerManagement.AddPublicKey:input_type -> softserve.AddPublicKeyRequest
+	18, // 67: softserve.GitServerManagement.RemovePublicKey:input_type -> softserve.RemovePublicKeyRequest
+	19, // 68: softserve.GitServerManagement.ListPublicKeys:input_type -> softserve.ListPublicKeysRequest
+	22, // 69: softserve.GitServerManagement.AddCollaborator:input_type -> softserve.AddCollaboratorRequest
+	23, // 70: softserve.GitServerManagement.RemoveCollaborator:input_type -> softserve.RemoveCollaboratorRequest
+	24, // 71: softserve.GitServerManagement.ListCollaborators:input_type -> softserve.ListCollaboratorsRequest
+	27, // 72: softserve.GitServerManagement.CreateAccessToken:input_type -> softserve.CreateAccessTokenRequest
+	28, // 73: softserve.GitServerManagement.DeleteAccessToken:input_type -> softserve.DeleteAccessTokenRequest
+	29, // 74: softserve.GitServerManagement.ListAccessTokens:input_type -> softserve.ListAccessTokensRequest
+	32, // 75: softserve.GitServerManagement.CreateWebhook:input_type -> softserve.CreateWebhookRequest
+	33, // 76: softserve.GitServerManagement.DeleteWebhook:input_type -> softserve.DeleteWebhookRequest
+	34, // 77: softserve.GitServerManagement.GetWebhook:input_type -> softserve.GetWebhookRequest
+	35, // 78: softserve.GitServerManagement.ListWebhooks:input_type -> softserve.ListWebhooksRequest
+	37, // 79: softserve.GitServerManagement.UpdateWebhook:input_type -> softserve.UpdateWebhookRequest
+	84, // 80: softserve.GitServerManagement.GetSettings:input_type -> google.protobuf.Empty
+	39, // 81: softserve.GitServerManagement.UpdateSettings:input_type -> softserve.UpdateSettingsRequest
+	84, // 82: softserve.GitServerManagement.HealthCheck:input_type -> google.protobuf.Empty
+	1,  // 83: softserve.GitServerManagement.CreateRepository:output_type -> softserve.Repository
+	84, // 84: softserve.GitServerManagement.DeleteRepository:output_type -> google.protobuf.Empty
+	1,  // 85: softserve.GitServerManagement.GetRepository:output_type -> softserve.Repository
+	6,  // 86: softserve.GitServerManagement.ListRepositories:output_type -> softserve.ListRepositoriesResponse
+	1,  // 87: softserve.GitServerManagement.RenameRepository:output_type -> softserve.Repository
+	1,  // 88: softserve.GitServerManagement.UpdateRepository:output_type -> softserve.Repository
+	1,  // 89: softserve.GitServerManagement.ImportRepository:output_type -> softserve.Repository
+	43, // 90: softserve.GitServerManagement.GetTree:output_type -> softserve.GetTreeResponse
+	45, // 91: softserve.GitServerManagement.GetBlob:output_type -> softserve.GetBlobResponse
+	48, // 92: softserve.GitServerManagement.GetBranches:output_type -> softserve.GetBranchesResponse
+	46, // 93: softserve.GitServerManagement.CreateBranch:output_type -> softserve.Branch
+	84, // 94: softserve.GitServerManagement.DeleteBranch:output_type -> google.protobuf.Empty
+	55, // 95: softserve.GitServerManagement.ListCommits:output_type -> softserve.ListCommitsResponse
+	58, // 96: softserve.GitServerManagement.GetCommit:output_type -> softserve.CommitDetail
+	6,  // 97: softserve.GitServerManagement.ListUserRepositories:output_type -> softserve.ListRepositoriesResponse
+	61, // 98: softserve.GitServerManagement.ListTags:output_type -> softserve.ListTagsResponse
+	63, // 99: softserve.GitServerManagement.GetTag:output_type -> softserve.TagDetail
+	63, // 100: softserve.GitServerManagement.CreateTag:output_type -> softserve.TagDetail
+	84, // 101: softserve.GitServerManagement.DeleteTag:output_type -> google.protobuf.Empty
+	68, // 102: softserve.GitServerManagement.CompareBranches:output_type -> softserve.CompareResponse
+	68, // 103: softserve.GitServerManagement.CompareCommits:output_type -> softserve.CompareResponse
+	71, // 104: softserve.GitServerManagement.GetDefaultBranch:output_type -> softserve.DefaultBranchResponse
+	71, // 105: softserve.GitServerManagement.SetDefaultBranch:output_type -> softserve.DefaultBranchResponse
+	73, // 106: softserve.GitServerManagement.GetCloneURLs:output_type -> softserve.CloneURLsResponse
+	75, // 107: softserve.GitServerManagement.GetRepositoryStats:output_type -> softserve.RepositoryStatsResponse
+	77, // 108: softserve.GitServerManagement.GetFileHistory:output_type -> softserve.GetFileHistoryResponse
+	55, // 109: softserve.GitServerManagement.SearchCommits:output_type -> softserve.ListCommitsResponse
+	80, // 110: softserve.GitServerManagement.CheckPath:output_type -> softserve.CheckPathResponse
+	82, // 111: softserve.GitServerManagement.MergeBranches:output_type -> softserve.MergeBranchesResponse
+	10, // 112: softserve.GitServerManagement.CreateUser:output_type -> softserve.User
+	84, // 113: softserve.GitServerManagement.DeleteUser:output_type -> google.protobuf.Empty
+	10, // 114: softserve.GitServerManagement.GetUser:output_type -> softserve.User
+	15, // 115: softserve.GitServerManagement.ListUsers:output_type -> softserve.ListUsersResponse
+	10, // 116: softserve.GitServerManagement.UpdateUser:output_type -> softserve.User
+	84, // 117: softserve.GitServerManagement.AddPublicKey:output_type -> google.protobuf.Empty
+	84, // 118: softserve.GitServerManagement.RemovePublicKey:output_type -> google.protobuf.Empty
+	20, // 119: softserve.GitServerManagement.ListPublicKeys:output_type -> softserve.ListPublicKeysResponse
+	84, // 120: softserve.GitServerManagement.AddCollaborator:output_type -> google.protobuf.Empty
+	84, // 121: softserve.GitServerManagement.RemoveCollaborator:output_type -> google.protobuf.Empty
+	25, // 122: softserve.GitServerManagement.ListCollaborators:output_type -> softserve.ListCollaboratorsResponse
+	26, // 123: softserve.GitServerManagement.CreateAccessToken:output_type -> softserve.AccessToken
+	84, // 124: softserve.GitServerManagement.DeleteAccessToken:output_type -> google.protobuf.Empty
+	30, // 125: softserve.GitServerManagement.ListAccessTokens:output_type -> softserve.ListAccessTokensResponse
+	31, // 126: softserve.GitServerManagement.CreateWebhook:output_type -> softserve.Webhook
+	84, // 127: softserve.GitServerManagement.DeleteWebhook:output_type -> google.protobuf.Empty
+	31, // 128: softserve.GitServerManagement.GetWebhook:output_type -> softserve.Webhook
+	36, // 129: softserve.GitServerManagement.ListWebhooks:output_type -> softserve.ListWebhooksResponse
+	31, // 130: softserve.GitServerManagement.UpdateWebhook:output_type -> softserve.Webhook
+	38, // 131: softserve.GitServerManagement.GetSettings:output_type -> softserve.ServerSettings
+	38, // 132: softserve.GitServerManagement.UpdateSettings:output_type -> softserve.ServerSettings
+	40, // 133: softserve.GitServerManagement.HealthCheck:output_type -> softserve.HealthCheckResponse
+	83, // [83:134] is the sub-list for method output_type
+	32, // [32:83] is the sub-list for method input_type
 	32, // [32:32] is the sub-list for extension type_name
 	32, // [32:32] is the sub-list for extension extendee
 	0,  // [0:32] is the sub-list for field type_name
@@ -5536,7 +5708,7 @@ func file_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_service_proto_rawDesc), len(file_service_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   80,
+			NumMessages:   82,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

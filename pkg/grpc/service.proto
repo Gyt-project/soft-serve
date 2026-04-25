@@ -48,6 +48,7 @@ service GitServerManagement {
   rpc GetFileHistory(GetFileHistoryRequest) returns (GetFileHistoryResponse);
   rpc SearchCommits(SearchCommitsRequest) returns (ListCommitsResponse);
   rpc CheckPath(CheckPathRequest) returns (CheckPathResponse);
+  rpc MergeBranches(MergeBranchesRequest) returns (MergeBranchesResponse);
 
   // User Management
   rpc CreateUser(CreateUserRequest) returns (User);
@@ -585,4 +586,21 @@ message CheckPathResponse {
   bool is_dir = 2;
   bool is_file = 3;
   optional int64 size = 4;     // File size if it's a file
+}
+
+// Merge Branches
+message MergeBranchesRequest {
+  string repo_name    = 1; // Repository name
+  string base_branch  = 2; // Branch to merge into
+  string head_branch  = 3; // Branch to merge from
+  string merge_method = 4; // "merge" | "squash" | "rebase"
+  string commit_title = 5; // Optional commit title override
+  string committer_name  = 6;
+  string committer_email = 7;
+}
+
+message MergeBranchesResponse {
+  bool   merged     = 1;
+  string sha        = 2; // SHA of the resulting merge commit
+  string message    = 3;
 }

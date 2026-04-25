@@ -48,6 +48,7 @@ const (
 	GitServerManagement_GetFileHistory_FullMethodName       = "/softserve.GitServerManagement/GetFileHistory"
 	GitServerManagement_SearchCommits_FullMethodName        = "/softserve.GitServerManagement/SearchCommits"
 	GitServerManagement_CheckPath_FullMethodName            = "/softserve.GitServerManagement/CheckPath"
+	GitServerManagement_MergeBranches_FullMethodName        = "/softserve.GitServerManagement/MergeBranches"
 	GitServerManagement_CreateUser_FullMethodName           = "/softserve.GitServerManagement/CreateUser"
 	GitServerManagement_DeleteUser_FullMethodName           = "/softserve.GitServerManagement/DeleteUser"
 	GitServerManagement_GetUser_FullMethodName              = "/softserve.GitServerManagement/GetUser"
@@ -112,6 +113,7 @@ type GitServerManagementClient interface {
 	GetFileHistory(ctx context.Context, in *GetFileHistoryRequest, opts ...grpc.CallOption) (*GetFileHistoryResponse, error)
 	SearchCommits(ctx context.Context, in *SearchCommitsRequest, opts ...grpc.CallOption) (*ListCommitsResponse, error)
 	CheckPath(ctx context.Context, in *CheckPathRequest, opts ...grpc.CallOption) (*CheckPathResponse, error)
+	MergeBranches(ctx context.Context, in *MergeBranchesRequest, opts ...grpc.CallOption) (*MergeBranchesResponse, error)
 	// User Management
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -431,6 +433,16 @@ func (c *gitServerManagementClient) CheckPath(ctx context.Context, in *CheckPath
 	return out, nil
 }
 
+func (c *gitServerManagementClient) MergeBranches(ctx context.Context, in *MergeBranchesRequest, opts ...grpc.CallOption) (*MergeBranchesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MergeBranchesResponse)
+	err := c.cc.Invoke(ctx, GitServerManagement_MergeBranches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gitServerManagementClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(User)
@@ -691,6 +703,7 @@ type GitServerManagementServer interface {
 	GetFileHistory(context.Context, *GetFileHistoryRequest) (*GetFileHistoryResponse, error)
 	SearchCommits(context.Context, *SearchCommitsRequest) (*ListCommitsResponse, error)
 	CheckPath(context.Context, *CheckPathRequest) (*CheckPathResponse, error)
+	MergeBranches(context.Context, *MergeBranchesRequest) (*MergeBranchesResponse, error)
 	// User Management
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
@@ -813,6 +826,9 @@ func (UnimplementedGitServerManagementServer) SearchCommits(context.Context, *Se
 }
 func (UnimplementedGitServerManagementServer) CheckPath(context.Context, *CheckPathRequest) (*CheckPathResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckPath not implemented")
+}
+func (UnimplementedGitServerManagementServer) MergeBranches(context.Context, *MergeBranchesRequest) (*MergeBranchesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MergeBranches not implemented")
 }
 func (UnimplementedGitServerManagementServer) CreateUser(context.Context, *CreateUserRequest) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateUser not implemented")
@@ -1405,6 +1421,24 @@ func _GitServerManagement_CheckPath_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GitServerManagement_MergeBranches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MergeBranchesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GitServerManagementServer).MergeBranches(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GitServerManagement_MergeBranches_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GitServerManagementServer).MergeBranches(ctx, req.(*MergeBranchesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GitServerManagement_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateUserRequest)
 	if err := dec(in); err != nil {
@@ -1919,6 +1953,10 @@ var GitServerManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPath",
 			Handler:    _GitServerManagement_CheckPath_Handler,
+		},
+		{
+			MethodName: "MergeBranches",
+			Handler:    _GitServerManagement_MergeBranches_Handler,
 		},
 		{
 			MethodName: "CreateUser",

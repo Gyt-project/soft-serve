@@ -1832,6 +1832,108 @@ func (s *Server) CheckPath(ctx context.Context, req *CheckPathRequest) (*CheckPa
 	}, nil
 }
 
+// MergeBranches merges headBranch into baseBranch in the given repository.
+func (s *Server) MergeBranches(ctx context.Context, req *MergeBranchesRequest) (*MergeBranchesResponse, error) {
+	if req.RepoName == "" || req.BaseBranch == "" || req.HeadBranch == "" {
+		return nil, status.Error(codes.InvalidArgument, "repo_name, base_branch, and head_branch are required")
+	}
+
+	repo, err := s.backend.Repository(ctx, req.RepoName)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "repository not found: %v", err)
+	}
+
+	gitRepo, err := repo.Open()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to open repository: %v", err)
+	}
+
+	baseSHA, err := gitRepo.BranchCommitID(req.BaseBranch)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "base branch %q not found: %v", req.BaseBranch, err)
+	}
+	headSHA, err := gitRepo.BranchCommitID(req.HeadBranch)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "head branch %q not found: %v", req.HeadBranch, err)
+	}
+
+	repoPath := gitRepo.Path
+
+	// Find the merge base to check fast-forward / already-merged cases.
+	mergeBaseOut, err := git.NewCommand("merge-base", baseSHA, headSHA).RunInDir(repoPath)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to find merge base: %v", err)
+	}
+	mergeBase := strings.TrimSpace(string(mergeBaseOut))
+
+	// headSHA is already an ancestor of baseSHA – nothing to do.
+	if mergeBase == headSHA {
+		return &MergeBranchesResponse{Merged: false, Sha: baseSHA, Message: "Already up to date"}, nil
+	}
+
+	// baseSHA is an ancestor of headSHA – simple fast-forward.
+	if mergeBase == baseSHA {
+		if _, err := git.NewCommand("update-ref", "refs/heads/"+req.BaseBranch, headSHA).RunInDir(repoPath); err != nil {
+			return nil, status.Errorf(codes.Internal, "fast-forward update-ref failed: %v", err)
+		}
+		return &MergeBranchesResponse{Merged: true, Sha: headSHA, Message: "Fast-forward"}, nil
+	}
+
+	committerName := req.CommitterName
+	if committerName == "" {
+		committerName = "Gyt"
+	}
+	committerEmail := req.CommitterEmail
+	if committerEmail == "" {
+		committerEmail = "noreply@gyt.local"
+	}
+	commitTitle := req.CommitTitle
+	if commitTitle == "" {
+		commitTitle = "Merge branch '" + req.HeadBranch + "'"
+	}
+	mergeMethod := req.MergeMethod
+	if mergeMethod == "" {
+		mergeMethod = "merge"
+	}
+
+	envs := []string{
+		"GIT_COMMITTER_NAME=" + committerName,
+		"GIT_COMMITTER_EMAIL=" + committerEmail,
+		"GIT_AUTHOR_NAME=" + committerName,
+		"GIT_AUTHOR_EMAIL=" + committerEmail,
+	}
+
+	// Compute the merged tree (git 2.38+). Exit code 1 means conflicts.
+	mergeTreeOut, mergeTreeErr := git.NewCommand("merge-tree", "--write-tree", baseSHA, headSHA).
+		AddEnvs(envs...).RunInDir(repoPath)
+	if mergeTreeErr != nil {
+		return nil, status.Errorf(codes.FailedPrecondition, "merge conflicts detected: %v", mergeTreeErr)
+	}
+	treeSHA := strings.TrimSpace(strings.SplitN(string(mergeTreeOut), "\n", 2)[0])
+
+	// Build the merge (or squash) commit.
+	var commitArgs []string
+	commitArgs = append(commitArgs, "commit-tree", treeSHA, "-p", baseSHA)
+	if mergeMethod != "squash" {
+		// merge or rebase: include head as a second parent.
+		commitArgs = append(commitArgs, "-p", headSHA)
+	}
+	commitArgs = append(commitArgs, "-m", commitTitle)
+
+	commitOut, err := git.NewCommand(commitArgs...).AddEnvs(envs...).RunInDir(repoPath)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "commit-tree failed: %v", err)
+	}
+	newSHA := strings.TrimSpace(string(commitOut))
+
+	// Advance the base branch ref to the new commit.
+	if _, err := git.NewCommand("update-ref", "refs/heads/"+req.BaseBranch, newSHA).RunInDir(repoPath); err != nil {
+		return nil, status.Errorf(codes.Internal, "update-ref failed: %v", err)
+	}
+
+	return &MergeBranchesResponse{Merged: true, Sha: newSHA, Message: commitTitle}, nil
+}
+
 // Helper function for comparing commits
 func (s *Server) compareCommits(gitRepo *git.Repository, baseSHA, headSHA string) (*CompareResponse, error) {
 	// Get the full diff between base and head (all changes introduced by head relative to base)

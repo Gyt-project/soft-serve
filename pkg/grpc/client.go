@@ -165,6 +165,10 @@ func (c *Client) CheckPath(ctx context.Context, req *CheckPathRequest) (*CheckPa
 	return c.client.CheckPath(ctx, req)
 }
 
+func (c *Client) MergeBranches(ctx context.Context, req *MergeBranchesRequest) (*MergeBranchesResponse, error) {
+	return c.client.MergeBranches(ctx, req)
+}
+
 // User Management
 
 func (c *Client) CreateUser(ctx context.Context, req *CreateUserRequest) (*User, error) {
