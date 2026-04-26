@@ -1,10 +1,15 @@
 package backend
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"io"
+	"net/http"
 	"os"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/Gyt-project/soft-serve/git"
 	"github.com/Gyt-project/soft-serve/pkg/hooks"
@@ -83,6 +88,34 @@ func (d *Backend) Update(ctx context.Context, _ io.Writer, _ io.Writer, repo str
 		d.logger.Error("error creating push webhook", "err", err)
 	} else if err := webhook.SendEvent(ctx, wh); err != nil {
 		d.logger.Error("error sending push webhook", "err", err)
+	}
+
+	// Notify the GYT backend so it can dismiss stale reviews and push WS events.
+	if hookURL := os.Getenv("GYT_BACKEND_HOOK_URL"); hookURL != "" && !git.IsZeroHash(arg.NewSha) {
+		branch := strings.TrimPrefix(arg.RefName, "refs/heads/")
+		if branch != arg.RefName {
+			owner := user.Username()
+			go notifyGytBackend(hookURL, owner, repo, branch)
+		}
+	}
+}
+
+// notifyGytBackend sends a push notification to the GYT backend gateway.
+func notifyGytBackend(hookURL, owner, repo, branch string) {
+	body, err := json.Marshal(map[string]string{"owner": owner, "repo": repo, "branch": branch})
+	if err != nil {
+		return
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, hookURL+"/hooks/push", bytes.NewReader(body))
+	if err != nil {
+		return
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
+	if err == nil {
+		resp.Body.Close()
 	}
 }
 

@@ -1,6 +1,7 @@
 package serve
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -32,6 +34,8 @@ var (
 		PersistentPostRunE: cmd.CloseDBContext,
 		RunE: func(c *cobra.Command, _ []string) error {
 			ctx := c.Context()
+			// Load .env from data directory (or working directory) if present.
+			loadDotEnv(filepath.Join(config.DefaultConfig().DataPath, ".env"))
 			cfg := config.DefaultConfig()
 			if cfg.Exist() {
 				if err := cfg.ParseFile(); err != nil {
@@ -139,6 +143,32 @@ var (
 
 func init() {
 	Command.Flags().BoolVarP(&syncHooks, "sync-hooks", "", false, "synchronize hooks for all repositories before running the server")
+}
+
+// loadDotEnv reads a simple KEY=VALUE .env file and sets any variables that
+// are not already present in the environment. Lines starting with # are ignored.
+func loadDotEnv(path string) {
+	f, err := os.Open(path) //nolint: gosec
+	if err != nil {
+		return
+	}
+	defer f.Close() //nolint: errcheck
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		k, v, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+		k = strings.TrimSpace(k)
+		v = strings.TrimSpace(v)
+		if k != "" && os.Getenv(k) == "" {
+			os.Setenv(k, v) //nolint: errcheck
+		}
+	}
 }
 
 const updateHookExample = `#!/bin/sh
