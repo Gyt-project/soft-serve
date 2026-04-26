@@ -40,7 +40,14 @@ func (d *Backend) AddCollaborator(ctx context.Context, repo string, username str
 		return err
 	}
 
-	wh, err := webhook.NewCollaboratorEvent(ctx, proto.UserFromContext(ctx), r, username, webhook.CollaboratorEventAdded)
+	sender := proto.UserFromContext(ctx)
+	if sender == nil {
+		// No user in context (e.g. programmatic / gRPC call without an SSH session).
+		// Skip the webhook — there is no actor to report.
+		return nil
+	}
+
+	wh, err := webhook.NewCollaboratorEvent(ctx, sender, r, username, webhook.CollaboratorEventAdded)
 	if err != nil {
 		return err
 	}
