@@ -1,0 +1,38 @@
+# ── Stage 1: Build soft-serve from source ────────────────────────────────────
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /src
+
+RUN apk add --no-cache git
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /bin/soft ./cmd/soft
+
+# ── Stage 2: Runtime ──────────────────────────────────────────────────────────
+FROM alpine:3.20
+
+RUN apk add --no-cache git bash openssh ca-certificates
+
+WORKDIR /soft-serve
+
+VOLUME /soft-serve
+
+ENV SOFT_SERVE_DATA_PATH="/soft-serve"
+ENV CI="1"
+
+# SSH
+EXPOSE 23231/tcp
+# HTTP
+EXPOSE 23232/tcp
+# Stats
+EXPOSE 23233/tcp
+# Git daemon
+EXPOSE 9418/tcp
+
+COPY --from=builder /bin/soft /usr/local/bin/soft
+
+ENTRYPOINT ["/usr/local/bin/soft", "serve"]
